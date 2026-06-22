@@ -127,13 +127,22 @@ const normalise = (value: string) => value.toLowerCase().replace(/[+&]/g, ' and 
 const QUANTITY_WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4 }
 
 function extractQuantity(value: string) {
-  const match = value.match(/^(one|two|three|four|[1-4])\b\s*(?:x\b\s*)?/)
-  if (!match) return { quantity: 1, food: value, explicit: false }
-  return {
-    quantity: QUANTITY_WORDS[match[1]] ?? Number(match[1]),
-    food: value.slice(match[0].length).trim(),
-    explicit: true,
+  const numericMultiplier = value.match(/^([1-4])\s*(?:x|\*)\s+(.+)$/)
+  if (numericMultiplier) {
+    return { quantity: Number(numericMultiplier[1]), food: numericMultiplier[2].trim(), explicit: true }
   }
+
+  const numericPortions = value.match(/^([1-4])\s+(.+)$/)
+  if (numericPortions) {
+    return { quantity: Number(numericPortions[1]), food: numericPortions[2].trim(), explicit: true }
+  }
+
+  const wordedPortions = value.match(/^(one|two|three|four)(?:\s+(?:lots?|portions?)\s+of)?\s+(.+)$/)
+  if (wordedPortions) {
+    return { quantity: QUANTITY_WORDS[wordedPortions[1]], food: wordedPortions[2].trim(), explicit: true }
+  }
+
+  return { quantity: 1, food: value, explicit: false }
 }
 
 function createLocalEstimate(query: string, key: string, quantity: number, source: FoodEstimate['source'] = 'local', note?: string, matchedTerms?: string[]): FoodEstimate {
