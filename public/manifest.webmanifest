@@ -1,0 +1,17 @@
+{
+  "name": "Easy Calories",
+  "short_name": "Easy Calories",
+  "description": "A lighthearted, approximate calorie notebook.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fbf8f2",
+  "theme_color": "#ef765f",
+  "icons": [
+    {
+      "src": "easy-calories-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

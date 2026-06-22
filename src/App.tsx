@@ -82,7 +82,7 @@ function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand-mark" aria-hidden="true">≈</div>
-        <div><h1>Easy Calories</h1><p>Approximate calories. Accurate judgement-free chaos.</p></div>
+        <div><h1>Easy Calories</h1><p>Approximate calories.</p></div>
       </header>
 
       <main>
