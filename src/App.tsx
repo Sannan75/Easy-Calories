@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { CSSProperties, FocusEvent } from 'react'
 import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection } from './types'
 import { emptyData, isValidImport, loadData, saveData } from './storage'
 
@@ -12,11 +13,10 @@ const meals: { id: MealSection; label: string; icon: string; empty: string }[] =
 ]
 
 const addedMessages = [
-  'Logged. The tiny food accountant is satisfied.',
-  'Evidence secured. No courtroom required.',
-  'Added. Snack maths is rude but useful.',
-  'Noted with absolutely no raised eyebrows.',
-  'In the notebook it goes. Very official-ish.',
+  'Evidence logged. The notebook grows stronger.',
+  'Roughly recorded. Nobody panic.',
+  'Added. Snack court is now in session.',
+  'Logged with all the precision this deserves.',
 ]
 
 const todayKey = () => {
@@ -48,16 +48,22 @@ function App() {
     return () => window.clearTimeout(timer)
   }, [toast])
 
-  const addEntry = (name: string, calories: number, meal: MealSection) => {
+  const addEntry = (name: string, calories: number, meal: MealSection, saveAsFavourite = false) => {
     const date = todayKey()
     const entry: FoodLogEntry = { id: uid(), name: name.trim(), calories, meal, createdAt: new Date().toISOString() }
-    setData((current) => ({
-      ...current,
-      days: {
-        ...current.days,
-        [date]: { date, entries: [...(current.days[date]?.entries ?? []), entry] },
-      },
-    }))
+    setData((current) => {
+      const favourite: FavouriteFood | null = saveAsFavourite
+        ? { id: uid(), name: entry.name, calories, defaultMeal: meal, createdAt: entry.createdAt }
+        : null
+      return {
+        ...current,
+        days: {
+          ...current.days,
+          [date]: { date, entries: [...(current.days[date]?.entries ?? []), entry] },
+        },
+        favourites: favourite ? [...current.favourites, favourite] : current.favourites,
+      }
+    })
     setToast(addedMessages[Math.floor(Math.random() * addedMessages.length)])
   }
 
@@ -82,7 +88,7 @@ function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand-mark" aria-hidden="true">≈</div>
-        <div><h1>Easy Calories</h1><p>Approximate calories.</p></div>
+        <div><h1>Easy Calories</h1><p>The no-drama food notebook.</p></div>
       </header>
 
       <main>
@@ -108,10 +114,10 @@ function App() {
       {toast && <div className="toast" role="status">{toast}</div>}
       <nav className="bottom-nav" aria-label="Main navigation">
         {([
-          ['today', '⌂', 'Today'], ['favourites', '♡', 'Favourites'], ['history', '↶', 'History'], ['settings', '⚙', 'Settings'],
+          ['today', '⌂', 'Today'], ['favourites', '♡', 'Favourites'], ['history', 'clock', 'History'], ['settings', '⚙', 'Settings'],
         ] as [Screen, string, string][]).map(([id, icon, label]) => (
           <button key={id} className={screen === id ? 'active' : ''} onClick={() => { setScreen(id); setSelectedDate(null) }} aria-current={screen === id ? 'page' : undefined}>
-            <span aria-hidden="true">{icon}</span>{label}
+            <span aria-hidden="true">{icon === 'clock' ? <ClockIcon /> : icon}</span>{label}
           </button>
         ))}
       </nav>
@@ -121,7 +127,7 @@ function App() {
 
 function TodayScreen({ day, onAdd, onDelete, onFavourite, onClear }: {
   day?: DayLog
-  onAdd: (name: string, calories: number, meal: MealSection) => void
+  onAdd: (name: string, calories: number, meal: MealSection, saveAsFavourite?: boolean) => void
   onDelete: (id: string) => void
   onFavourite: (name: string, calories: number, meal: MealSection) => void
   onClear: () => void
@@ -160,21 +166,45 @@ function TodayScreen({ day, onAdd, onDelete, onFavourite, onClear }: {
   </div>
 }
 
-function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection; onClose: () => void; onSubmit: (name: string, calories: number, meal: MealSection) => void }) {
+function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection; onClose: () => void; onSubmit: (name: string, calories: number, meal: MealSection, saveAsFavourite: boolean) => void }) {
   const [name, setName] = useState('')
   const [calories, setCalories] = useState('')
   const [meal, setMeal] = useState(defaultMeal)
+  const [saveAsFavourite, setSaveAsFavourite] = useState(false)
+  const [visualViewport, setVisualViewport] = useState({ height: 0, offsetTop: 0 })
   const nameRef = useRef<HTMLInputElement>(null)
   useEffect(() => nameRef.current?.focus(), [])
 
-  return <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    const updateViewport = () => setVisualViewport({ height: viewport.height, offsetTop: viewport.offsetTop })
+    updateViewport()
+    viewport.addEventListener('resize', updateViewport)
+    viewport.addEventListener('scroll', updateViewport)
+    return () => {
+      viewport.removeEventListener('resize', updateViewport)
+      viewport.removeEventListener('scroll', updateViewport)
+    }
+  }, [])
+
+  const backdropStyle: CSSProperties | undefined = visualViewport.height
+    ? { height: visualViewport.height, top: visualViewport.offsetTop, bottom: 'auto' }
+    : undefined
+  const keepFocusedControlVisible = (event: FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const target = event.currentTarget
+    window.setTimeout(() => target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 180)
+  }
+
+  return <div className="modal-backdrop" style={backdropStyle} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
     <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="add-title">
       <div className="sheet-handle" />
       <div className="sheet-heading"><div><span className="eyebrow">No laboratory required</span><h2 id="add-title">Add a food-ish thing</h2></div><button className="close-button" onClick={onClose} aria-label="Close">×</button></div>
-      <form onSubmit={(e) => { e.preventDefault(); const kcal = Number(calories); if (name.trim() && kcal > 0) onSubmit(name, Math.round(kcal), meal) }}>
-        <label>What was it?<input ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. heroic cheese toastie" maxLength={80} required /></label>
-        <label>Roughly how many kcals?<input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onChange={(e) => setCalories(e.target.value)} placeholder="No need to get forensic" required /></label>
-        <label>Where did it happen?<select value={meal} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>
+      <form onSubmit={(e) => { e.preventDefault(); const kcal = Number(calories); if (name.trim() && kcal > 0) onSubmit(name, Math.round(kcal), meal, saveAsFavourite) }}>
+        <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => setName(e.target.value)} placeholder="e.g. heroic cheese toastie" maxLength={80} required /></label>
+        <label>Roughly how many kcals?<input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => setCalories(e.target.value)} placeholder="No need to get forensic" required /></label>
+        <label>Where did it happen?<select value={meal} onFocus={keepFocusedControlVisible} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>
+        <label className="usual-toggle"><input type="checkbox" checked={saveAsFavourite} onChange={(e) => setSaveAsFavourite(e.target.checked)} /><span><strong>Save as a usual suspect</strong><small>Handy for foods making repeat appearances.</small></span></label>
         <button className="primary-button" type="submit">Log the evidence</button>
       </form>
     </section>
@@ -182,11 +212,11 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
 }
 
 function FavouritesScreen({ favourites, onAdd, onDelete }: { favourites: FavouriteFood[]; onAdd: (f: FavouriteFood) => void; onDelete: (id: string) => void }) {
-  return <div className="screen"><PageIntro eyebrow="The regulars" title="Usual suspects" copy="Tap once and it joins today. Tiny administrative miracle." />
+  return <div className="screen"><PageIntro eyebrow="The regulars" title="Usual suspects" copy="Your repeat foods live here. Tap once and one joins today—tiny administrative miracle." />
     {favourites.length ? <div className="stack">{favourites.map((f) => <article className="favourite-card" key={f.id}>
       <button className="favourite-main" onClick={() => onAdd(f)}><span className="favourite-icon">♡</span><span><strong>{f.name}</strong><small>about {f.calories.toLocaleString()} kcals · {f.defaultMeal}</small></span><span className="add-chip">+ Add</span></button>
       <button className="delete-row" onClick={() => onDelete(f.id)}>Remove from suspects</button>
-    </article>)}</div> : <EmptyState icon="♡" title="Save the usual suspects here." copy="Tap the heart beside any food on Today. It will appear here, looking organised." />}
+    </article>)}</div> : <EmptyState icon="♡" title="Save the usual suspects here." copy="Favourites are for repeat foods. Save one while logging, or tap the heart beside anything on Today." />}
   </div>
 }
 
@@ -233,6 +263,10 @@ function PageIntro({ eyebrow, title, copy }: { eyebrow: string; title: string; c
 
 function EmptyState({ icon, title, copy }: { icon: string; title: string; copy: string }) {
   return <div className="empty-state"><span>{icon}</span><h3>{title}</h3><p>{copy}</p></div>
+}
+
+function ClockIcon() {
+  return <svg className="nav-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>
 }
 
 function formatStoredDate(date: string) {

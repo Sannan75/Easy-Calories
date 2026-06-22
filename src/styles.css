@@ -59,8 +59,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .item-actions button { border: 0; background: none; width: 40px; height: 40px; color: #877f73; font-size: 20px; cursor: pointer; }
 .fab { width: 100%; min-height: 56px; margin-top: 16px; border: 0; border-radius: 17px; background: var(--coral); color: white; font-weight: 700; font-size: 14px; box-shadow: 0 9px 20px rgba(239,118,95,.23); cursor: pointer; }
 .fab span { font-size: 20px; vertical-align: -1px; margin-right: 6px; }
-.modal-backdrop { position: fixed; z-index: 20; inset: 0; background: rgba(32,29,24,.42); display: flex; align-items: flex-end; justify-content: center; padding-top: env(safe-area-inset-top); }
-.sheet { width: 100%; max-width: 600px; padding: 10px 20px calc(24px + env(safe-area-inset-bottom)); background: var(--cream); border-radius: 26px 26px 0 0; box-shadow: 0 -15px 50px rgba(0,0,0,.15); animation: slideup .25s ease; }
+.modal-backdrop { position: fixed; z-index: 20; inset: 0; height: 100dvh; background: rgba(32,29,24,.42); display: flex; align-items: flex-end; justify-content: center; padding-top: max(8px, env(safe-area-inset-top)); overflow: hidden; }
+.sheet { width: 100%; max-width: 600px; max-height: 100%; padding: 10px 20px calc(18px + env(safe-area-inset-bottom)); background: var(--cream); border-radius: 26px 26px 0 0; box-shadow: 0 -15px 50px rgba(0,0,0,.15); animation: slideup .25s ease; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scroll-padding: 100px 0 calc(96px + env(safe-area-inset-bottom)); }
 @keyframes slideup { from { transform: translateY(30px); opacity: .7; } }
 .sheet-handle { width: 40px; height: 4px; margin: 0 auto 18px; border-radius: 5px; background: #d9d1c5; }
 .sheet-heading { display: flex; justify-content: space-between; align-items: start; }
@@ -70,9 +70,19 @@ form label { display: block; margin-bottom: 15px; color: #5b564e; font-size: 12p
 input, select { display: block; width: 100%; height: 51px; margin-top: 7px; padding: 0 14px; border: 1px solid #ddd4c7; border-radius: 13px; background: white; color: var(--ink); font-size: 16px; }
 .primary-button, .secondary-button { min-height: 49px; border-radius: 13px; font-weight: 700; cursor: pointer; }
 .primary-button { width: 100%; border: 0; background: var(--coral); color: white; }
+.sheet .primary-button { position: sticky; z-index: 2; bottom: env(safe-area-inset-bottom); margin-top: 3px; box-shadow: 0 -12px 18px var(--cream), 0 8px 18px rgba(239,118,95,.2); }
+.usual-toggle { min-height: 60px; padding: 10px 12px; display: flex; align-items: center; gap: 11px; border: 1px solid var(--line); border-radius: 13px; background: #f7f1e8; cursor: pointer; }
+.usual-toggle input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; display: grid; place-items: center; width: 24px; height: 24px; margin: 0; padding: 0; border: 2px solid #b9ab9a; border-radius: 8px; background: white; }
+.usual-toggle input::after { content: '✓'; color: white; font-size: 15px; font-weight: 700; transform: scale(0); transition: transform .12s ease; }
+.usual-toggle input:checked { border-color: var(--green); background: var(--green); }
+.usual-toggle input:checked::after { transform: scale(1); }
+.usual-toggle span, .usual-toggle strong, .usual-toggle small { display: block; }
+.usual-toggle strong { color: var(--ink); font-size: 12px; }
+.usual-toggle small { margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 500; }
 .bottom-nav { position: fixed; z-index: 10; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 920px); height: calc(72px + env(safe-area-inset-bottom)); padding: 7px 8px env(safe-area-inset-bottom); display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: rgba(255,253,248,.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
 .bottom-nav button { border: 0; border-radius: 13px; background: transparent; color: #8a8378; font-size: 10px; font-weight: 600; cursor: pointer; }
 .bottom-nav button span { display: block; height: 27px; font-size: 21px; line-height: 25px; }
+.nav-clock { display: block; width: 23px; height: 23px; margin: 1px auto 0; }
 .bottom-nav button.active { background: #f2e8df; color: var(--coral-dark); }
 .toast { position: fixed; z-index: 30; bottom: calc(84px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 500px; padding: 13px 17px; border-radius: 14px; background: #2d3d34; color: white; text-align: center; font-size: 12px; box-shadow: 0 8px 25px rgba(0,0,0,.19); animation: toastin .2s ease; }
 @keyframes toastin { from { transform: translate(-50%, 8px); opacity: 0; } }
