@@ -2,6 +2,8 @@ export interface FoodEstimate {
   name: string
   brand?: string
   calories: number
+  quantity?: number
+  unitCalories?: number
   source: 'local' | 'open-food-facts'
   note?: string
 }
@@ -47,19 +49,32 @@ const LOCAL_ESTIMATES: Record<string, number> = {
 
 const normalise = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ')
 
+const QUANTITY_WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4 }
+
+function extractQuantity(value: string) {
+  const match = value.match(/^(one|two|three|four|[1-4])\b\s*/)
+  if (!match) return { quantity: 1, food: value }
+  return {
+    quantity: QUANTITY_WORDS[match[1]] ?? Number(match[1]),
+    food: value.slice(match[0].length).trim(),
+  }
+}
+
 export async function estimateFoodByName(query: string): Promise<FoodEstimate | null> {
   const normalised = normalise(query)
   if (!normalised) return null
+  const { quantity, food } = extractQuantity(normalised)
+  if (!food) return null
 
-  const exact = LOCAL_ESTIMATES[normalised]
-  if (exact) return { name: query.trim(), calories: exact, source: 'local' }
+  const exact = LOCAL_ESTIMATES[food]
+  if (exact) return { name: query.trim(), calories: exact * quantity, quantity, unitCalories: exact, source: 'local' }
 
   const partial = Object.keys(LOCAL_ESTIMATES)
     .sort((a, b) => b.length - a.length)
-    .find((food) => normalised.includes(food) || (normalised.length >= 4 && food.includes(normalised)))
+    .find((knownFood) => food.includes(knownFood) || (food.length >= 4 && knownFood.includes(food)))
 
   return partial
-    ? { name: query.trim(), calories: LOCAL_ESTIMATES[partial], source: 'local', note: `Using ${partial} maths. Close enough for notebook work.` }
+    ? { name: query.trim(), calories: LOCAL_ESTIMATES[partial] * quantity, quantity, unitCalories: LOCAL_ESTIMATES[partial], source: 'local', note: `Using ${partial} maths. Close enough for notebook work.` }
     : null
 }
 
@@ -111,6 +126,8 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
         name,
         brand: product.brands?.trim() || undefined,
         calories: Math.round(perServing),
+        quantity: 1,
+        unitCalories: Math.round(perServing),
         source: 'open-food-facts',
         note: product.serving_size ? `Using the listed serving of ${product.serving_size}.` : 'Using the listed serving calories.',
       }
@@ -121,6 +138,8 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
         name,
         brand: product.brands?.trim() || undefined,
         calories: Math.round(per100g * servingQuantity / 100),
+        quantity: 1,
+        unitCalories: Math.round(per100g * servingQuantity / 100),
         source: 'open-food-facts',
         note: `Roughly calculated for ${product.serving_size || `${servingQuantity}g`}.`,
       }
@@ -131,6 +150,8 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
         name,
         brand: product.brands?.trim() || undefined,
         calories: Math.round(per100g),
+        quantity: 1,
+        unitCalories: Math.round(per100g),
         source: 'open-food-facts',
         note: 'Found it, but the serving size is being coy. Using per-100g calories.',
       }

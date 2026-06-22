@@ -175,6 +175,8 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
   const [name, setName] = useState('')
   const [barcode, setBarcode] = useState('')
   const [calories, setCalories] = useState('')
+  const [quantity, setQuantity] = useState(1)
+  const [unitCalories, setUnitCalories] = useState<number | null>(null)
   const [meal, setMeal] = useState(defaultMeal)
   const [saveAsFavourite, setSaveAsFavourite] = useState(false)
   const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
@@ -214,8 +216,15 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
       setLookupMessage({ tone: 'error', text: 'The calorie oracle has shrugged. You may need to make a heroic guess.' })
       return
     }
+    const estimatedQuantity = estimate.quantity ?? 1
+    const each = estimate.unitCalories ?? Math.round(estimate.calories / estimatedQuantity)
+    setQuantity(estimatedQuantity)
+    setUnitCalories(each)
     setCalories(String(estimate.calories))
-    setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${estimate.note ? ` ${estimate.note}` : ''}` })
+    const estimateCopy = estimatedQuantity > 1
+      ? `That looks like ${estimatedQuantity}. Roughly ${each.toLocaleString()} each, so ${estimate.calories.toLocaleString()} kcals total.`
+      : `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.`
+    setLookupMessage({ tone: 'success', text: `${estimateCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
   }
 
   const estimateByBarcode = async () => {
@@ -229,6 +238,8 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
         return
       }
       setName(estimate.name)
+      setQuantity(1)
+      setUnitCalories(estimate.unitCalories ?? estimate.calories)
       setCalories(String(estimate.calories))
       const brand = estimate.brand ? ` ${estimate.brand} has entered the notebook.` : ''
       setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${brand}${estimate.note ? ` ${estimate.note}` : ''}` })
@@ -242,6 +253,20 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
     }
   }
 
+  const chooseQuantity = (nextQuantity: number) => {
+    setQuantity(nextQuantity)
+    if (unitCalories) {
+      const total = Math.round(unitCalories * nextQuantity)
+      setCalories(String(total))
+      setLookupMessage({
+        tone: 'success',
+        text: nextQuantity > 1
+          ? `Roughly ${Math.round(unitCalories).toLocaleString()} each, so ${total.toLocaleString()} kcals total. Sandwich multiplication: finally useful.`
+          : `I reckon this is roughly ${total.toLocaleString()} kcals.`,
+      })
+    }
+  }
+
   return <div className="modal-backdrop" style={backdropStyle} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
     <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="add-title">
       <div className="sheet-handle" />
@@ -252,7 +277,7 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
       </div>
       <form onSubmit={(e) => { e.preventDefault(); const kcal = Number(calories); if (name.trim() && kcal > 0) onSubmit(name, Math.round(kcal), meal, saveAsFavourite) }}>
         {mode === 'name' ? <>
-          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null) }} placeholder="e.g. heroic cheese toastie" maxLength={80} required /></label>
+          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null) }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
           <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
         </> : <>
           <label>Barcode number<input value={barcode} onFocus={keepFocusedControlVisible} onChange={(e) => { setBarcode(e.target.value.replace(/[^0-9 ]/g, '')); setLookupMessage(null) }} placeholder="Type or paste the tiny number" inputMode="numeric" maxLength={18} /></label>
@@ -260,7 +285,8 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
           {name && <label>What shall we call it?<input value={name} onFocus={keepFocusedControlVisible} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
-        <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => setCalories(e.target.value)} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
+        {unitCalories && <div className="quantity-picker"><div><strong>How many made an appearance?</strong><small>{Math.round(unitCalories).toLocaleString()} each × {quantity} = roughly {Math.round(unitCalories * quantity).toLocaleString()} kcals</small></div><div className="quantity-options" aria-label="Item quantity">{[1, 2, 3, 4].map((number) => <button type="button" key={number} className={quantity === number ? 'active' : ''} aria-pressed={quantity === number} onClick={() => chooseQuantity(number)}>{number}</button>)}</div></div>}
+        <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => { const value = e.target.value; setCalories(value); if (unitCalories && Number(value) > 0) setUnitCalories(Number(value) / quantity) }} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
         <label>Where did it happen?<select value={meal} onFocus={keepFocusedControlVisible} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>
         <label className="usual-toggle"><input type="checkbox" checked={saveAsFavourite} onChange={(e) => setSaveAsFavourite(e.target.checked)} /><span><strong>Save as a usual suspect</strong><small>Handy for foods making repeat appearances.</small></span></label>
         <button className="primary-button" type="submit">Log the evidence</button>
@@ -311,7 +337,7 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
     <section className="settings-card"><div className="settings-icon">↥</div><div><h3>Manual backup</h3><p>Keep your food lore somewhere safe. The file is yours; nothing leaves this device by itself.</p></div><div className="button-pair"><button className="secondary-button" onClick={exportData}>Export JSON</button><button className="secondary-button" onClick={() => inputRef.current?.click()}>Import JSON</button><input className="visually-hidden" ref={inputRef} type="file" accept="application/json,.json" onChange={(e) => importData(e.target.files?.[0])} /></div></section>
     <section className="settings-card"><div className="settings-icon">⌁</div><div><h3>Stored on this device</h3><p>No account, no cloud, no mysterious wellness empire. Your notebook stays in localStorage; only barcodes you choose to look up are sent to Open Food Facts.</p></div></section>
     <button className="danger-button" onClick={onClearAll}>Erase all notebook data</button>
-    <p className="tiny-note">Easy Calories v0.2.0 · rough arithmetic, not health advice. The vibes are free.</p>
+    <p className="tiny-note">Easy Calories v0.2.1 · rough arithmetic, not health advice. The vibes are free.</p>
   </div>
 }
 

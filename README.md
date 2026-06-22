@@ -3,6 +3,7 @@
 A mobile-first, judgement-free and deliberately approximate calorie notebook. Logs and favourites stay in the browser's `localStorage`; there is no account or backend.
 
 Food-name estimates use a small offline dictionary. Optional manual barcode lookup requests product data from Open Food Facts, while keeping notebook data on the device.
+Leading quantities such as `two ham sandwiches` or `2 ham sandwiches` are recognised, and estimated foods include a 1–4 quantity picker with per-item and total calories.
 
 ## Run locally
 
