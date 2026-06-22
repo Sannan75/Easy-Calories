@@ -405,7 +405,7 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
     <section className="settings-card"><div className="settings-icon">↥</div><div><h3>Manual backup</h3><p>Keep your food lore somewhere safe. The file is yours; nothing leaves this device by itself.</p></div><div className="button-pair"><button className="secondary-button" onClick={exportData}>Export JSON</button><button className="secondary-button" onClick={() => inputRef.current?.click()}>Import JSON</button><input className="visually-hidden" ref={inputRef} type="file" accept="application/json,.json" onChange={(e) => importData(e.target.files?.[0])} /></div></section>
     <section className="settings-card"><div className="settings-icon">⌁</div><div><h3>Stored on this device</h3><p>No account, no cloud, no mysterious wellness empire. Your notebook stays in localStorage; only barcodes you choose to look up are sent to Open Food Facts.</p></div></section>
     <button className="danger-button" onClick={onClearAll}>Erase all notebook data</button>
-    <p className="tiny-note">Easy Calories v0.4.1 · rough arithmetic, not health advice. The vibes are free.</p>
+    <p className="tiny-note">Easy Calories v0.5.0 · rough arithmetic, not health advice. The vibes are free.</p>
   </div>
 }
 

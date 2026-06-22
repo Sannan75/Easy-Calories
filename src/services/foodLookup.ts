@@ -4,8 +4,9 @@ export interface FoodEstimate {
   calories: number
   quantity?: number
   unitCalories?: number
-  source: 'local' | 'open-food-facts'
+  source: 'local' | 'open-food-facts' | 'combo' | 'alias' | 'partial' | 'manual'
   note?: string
+  matchedTerms?: string[]
 }
 
 export type FoodLookupErrorCode = 'network' | 'missing-calories'
@@ -26,22 +27,31 @@ const LOCAL_FOOD_GROUPS: Record<string, Record<string, number>> = {
   breakfast: {
     porridge: 220, oats: 220, cereal: 180, granola: 250, yoghurt: 150, yogurt: 150,
     croissant: 230, pancake: 175, pancakes: 350, crepe: 160, crepes: 320, waffle: 220,
-    toast: 90, 'buttered toast': 150, 'jam toast': 160, 'peanut butter toast': 250,
+    toast: 90, 'bread slice': 90, 'slice of bread': 90, butter: 50, jam: 70,
+    'buttered toast': 150, 'jam toast': 160, 'peanut butter toast': 250,
   },
   meals: {
     sandwich: 400, 'chicken sandwich': 450, 'cheese sandwich': 400, 'ham sandwich': 380,
     wrap: 450, 'chicken wrap': 450, salad: 250, 'caesar salad': 450, soup: 250,
     'chicken soup': 300, pasta: 600, rice: 250, curry: 700, 'pizza slice': 280, pizza: 900,
     burger: 650, fries: 350, chips: 350, omelette: 300, 'chicken breast': 280, egg: 75,
-    'boiled egg': 75, 'scrambled eggs': 220, 'cheese toastie': 450, 'ready meal': 600,
+    'boiled egg': 75, 'scrambled eggs': 220, 'cheese on toast': 350, 'cheese toast': 350,
+    'cheese toastie': 450, 'toasted cheese sandwich': 450, 'ham and cheese sandwich': 450,
+    'tuna mayo sandwich': 450, 'beans on toast': 400, 'egg on toast': 220,
+    'avocado toast': 300, 'chicken and rice': 550, 'chicken rice': 550,
+    'pasta with sauce': 600, 'pasta and sauce': 600, 'crepe with nutella': 260,
+    'pancake with syrup': 300, 'yoghurt with berries': 220, 'ready meal': 600,
   },
   snacks: {
     crisps: 180, 'chocolate bar': 230, chocolate: 230, biscuit: 70, biscuits: 140,
-    cookie: 160, 'cake slice': 350, muffin: 400, nuts: 180, cheese: 120, popcorn: 150,
+    cookie: 160, 'cake slice': 350, muffin: 400, nuts: 180, cheese: 120, cheddar: 120,
+    ham: 70, chicken: 180, tuna: 120, mayonnaise: 90, mayo: 90, sugar: 20,
+    nutella: 100, 'peanut butter': 180, beans: 180, 'baked beans': 180, popcorn: 150,
   },
   drinks: {
-    coffee: 40, 'coffee with milk': 40, latte: 150, cappuccino: 120, tea: 30,
-    'tea with milk': 30, 'orange juice': 110, juice: 110, wine: 160, beer: 180,
+    coffee: 40, milk: 30, 'oat milk': 45, 'coffee with milk': 40, 'coffee with oat milk': 60,
+    latte: 150, cappuccino: 120, tea: 30, 'tea with milk': 30, 'orange juice': 110,
+    juice: 110, wine: 160, beer: 180,
   },
 }
 
@@ -54,6 +64,13 @@ const FOOD_ALIASES: Record<string, string> = {
   'choc bar': 'chocolate bar',
   cuppa: 'tea with milk',
   brew: 'tea with milk',
+  'red wine': 'wine',
+  'toast with jam': 'jam toast',
+}
+
+const COMMON_TYPOS: Record<string, string> = {
+  cheries: 'cherry',
+  creap: 'crepe',
 }
 
 const SINGULAR_FORMS: Record<string, string> = {
@@ -68,7 +85,22 @@ const SINGULAR_FORMS: Record<string, string> = {
   biscuits: 'biscuit',
   eggs: 'egg',
   sandwiches: 'sandwich',
+  bananas: 'banana',
+  coffees: 'coffee',
+  toasties: 'toastie',
 }
+
+const SINGULAR_WORDS: Record<string, string> = {
+  cherries: 'cherry', strawberries: 'strawberry', blueberries: 'blueberry', raspberries: 'raspberry',
+  tomatoes: 'tomato', potatoes: 'potato', crepes: 'crepe', pancakes: 'pancake', biscuits: 'biscuit',
+  eggs: 'egg', sandwiches: 'sandwich', bananas: 'banana', coffees: 'coffee', toasties: 'toastie',
+}
+
+const COMBO_PHRASES = new Set([
+  'cheese on toast', 'ham and cheese sandwich', 'beans on toast', 'egg on toast', 'chicken and rice',
+  'pasta with sauce', 'pasta and sauce', 'crepe with nutella', 'pancake with syrup',
+  'yoghurt with berries', 'coffee with oat milk', 'coffee with milk', 'tea with milk',
+])
 
 const PORTION_NOTES: Record<string, string> = {
   cherry: 'Assuming a small bowl-ish serving.',
@@ -79,7 +111,7 @@ const PORTION_NOTES: Record<string, string> = {
   wine: 'Assuming a normal glass. Optimistic, perhaps.',
 }
 
-const normalise = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ')
+const normalise = (value: string) => value.toLowerCase().replace(/[+&]/g, ' and ').trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim()
 
 const QUANTITY_WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4 }
 
@@ -93,16 +125,54 @@ function extractQuantity(value: string) {
   }
 }
 
-function createLocalEstimate(query: string, key: string, quantity: number, partial = false): FoodEstimate {
+function createLocalEstimate(query: string, key: string, quantity: number, source: FoodEstimate['source'] = 'local', note?: string, matchedTerms?: string[]): FoodEstimate {
   const unitCalories = LOCAL_ESTIMATES[key]
   return {
     name: query.trim(),
     calories: unitCalories * quantity,
     quantity,
     unitCalories,
-    source: 'local',
-    note: PORTION_NOTES[key] ?? (partial ? `Using ${key} maths. Close enough for notebook work.` : undefined),
+    source,
+    note: note ?? PORTION_NOTES[key],
+    matchedTerms: matchedTerms ?? [key],
   }
+}
+
+const singularisePhrase = (value: string) => value.split(' ').map((word) => SINGULAR_WORDS[word] ?? word).join(' ')
+const knownKeys = () => Object.keys(LOCAL_ESTIMATES).sort((a, b) => b.length - a.length)
+const comboTerms = (value: string) => value.split(/\b(?:with|and|on|in|plus)\b/).map((part) => part.trim()).filter(Boolean)
+
+function resolvePart(value: string): { key: string; source: FoodEstimate['source']; partial: boolean } | null {
+  if (LOCAL_ESTIMATES[value]) return { key: value, source: 'local', partial: false }
+  const alias = FOOD_ALIASES[value]
+  if (alias && LOCAL_ESTIMATES[alias]) return { key: alias, source: 'alias', partial: false }
+  const singular = SINGULAR_FORMS[value] ?? singularisePhrase(value)
+  if (LOCAL_ESTIMATES[singular]) return { key: singular, source: 'alias', partial: false }
+  const contained = knownKeys().find((key) => value.includes(key))
+  return contained ? { key: contained, source: 'partial', partial: true } : null
+}
+
+function editDistance(a: string, b: string) {
+  const row = Array.from({ length: b.length + 1 }, (_, index) => index)
+  for (let i = 1; i <= a.length; i += 1) {
+    let previous = row[0]
+    row[0] = i
+    for (let j = 1; j <= b.length; j += 1) {
+      const saved = row[j]
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1))
+      previous = saved
+    }
+  }
+  return row[b.length]
+}
+
+function closestSingleFood(value: string) {
+  if (value.includes(' ') || value.length < 4) return null
+  const ranked = knownKeys().filter((key) => !key.includes(' ')).map((term) => ({ term, key: SINGULAR_WORDS[term] ?? term, distance: editDistance(value, term) })).sort((a, b) => a.distance - b.distance)
+  const best = ranked[0]
+  if (!best || (best.distance > 1 && !(value.length >= 5 && best.distance <= 2))) return null
+  if (ranked[1]?.distance === best.distance && ranked[1].key !== best.key) return null
+  return best.key
 }
 
 export async function estimateFoodByName(query: string): Promise<FoodEstimate | null> {
@@ -110,29 +180,55 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
   if (!normalised) return null
   const { quantity, food, explicit } = extractQuantity(normalised)
   if (!food) return null
+  const lookupPhrase = explicit ? singularisePhrase(food) : food
 
-  // Explicit counts describe individual items, so "two crepes" uses the one-crepe entry.
-  if (explicit) {
-    const unitKey = FOOD_ALIASES[food] ?? SINGULAR_FORMS[food]
-    if (unitKey && LOCAL_ESTIMATES[unitKey]) return createLocalEstimate(query, unitKey, quantity)
+  const exact = LOCAL_ESTIMATES[lookupPhrase]
+  if (exact) {
+    const isCombo = COMBO_PHRASES.has(lookupPhrase)
+    return createLocalEstimate(query, lookupPhrase, quantity, isCombo ? 'combo' : 'local', isCombo ? 'This is snack algebra, not a court statement.' : undefined, isCombo ? comboTerms(lookupPhrase) : undefined)
   }
 
-  const exact = LOCAL_ESTIMATES[food]
-  if (exact) return createLocalEstimate(query, food, quantity)
+  const alias = FOOD_ALIASES[lookupPhrase]
+  if (alias && LOCAL_ESTIMATES[alias]) return createLocalEstimate(query, alias, quantity, 'alias')
 
-  const alias = FOOD_ALIASES[food]
-  if (alias && LOCAL_ESTIMATES[alias]) return createLocalEstimate(query, alias, quantity)
+  const singular = SINGULAR_FORMS[lookupPhrase]
+  if (singular && LOCAL_ESTIMATES[singular]) return createLocalEstimate(query, singular, quantity, 'alias')
 
-  const singular = SINGULAR_FORMS[food]
-  if (singular && LOCAL_ESTIMATES[singular]) return createLocalEstimate(query, singular, quantity)
+  const containedPhrase = knownKeys().filter((key) => key.includes(' ')).find((key) => lookupPhrase.includes(key))
+  if (containedPhrase) {
+    const terms = comboTerms(containedPhrase)
+    const extra = lookupPhrase.replace(containedPhrase, '').trim()
+    const note = extra
+      ? `I understood the ${terms.join(' and ')}. The ${extra} bit remains legally separate.`
+      : undefined
+    return createLocalEstimate(query, containedPhrase, quantity, 'partial', note, terms)
+  }
 
-  const partial = Object.keys(LOCAL_ESTIMATES)
-    .sort((a, b) => b.length - a.length)
-    .find((knownFood) => food.includes(knownFood) || (food.length >= 4 && knownFood.includes(food)))
+  const parts = comboTerms(lookupPhrase)
+  if (parts.length > 1) {
+    const resolved = parts.map(resolvePart)
+    const known = resolved.filter((part): part is NonNullable<typeof part> => Boolean(part))
+    if (known.length) {
+      const unitCalories = known.reduce((sum, part) => sum + LOCAL_ESTIMATES[part.key], 0)
+      const unknown = parts.filter((_, index) => !resolved[index])
+      return {
+        name: query.trim(), calories: unitCalories * quantity, quantity, unitCalories, source: 'combo',
+        matchedTerms: known.map((part) => part.key),
+        note: unknown.length
+          ? 'One ingredient escaped the paperwork, but the rest has been counted.'
+          : 'This is snack algebra, not a court statement.',
+      }
+    }
+  }
 
-  return partial
-    ? createLocalEstimate(query, partial, quantity, true)
-    : null
+  const partial = knownKeys().find((knownFood) => lookupPhrase.includes(knownFood) || (lookupPhrase.length >= 4 && knownFood.includes(lookupPhrase)))
+  if (partial) return createLocalEstimate(query, partial, quantity, 'partial', PORTION_NOTES[partial] ?? `Using ${partial} maths. Close enough for notebook work.`)
+
+  const typo = COMMON_TYPOS[lookupPhrase]
+  if (typo) return createLocalEstimate(query, typo, quantity, 'alias', `I think you meant ${typo}. If not, the snack oracle apologises.`)
+
+  const fuzzy = closestSingleFood(lookupPhrase)
+  return fuzzy ? createLocalEstimate(query, fuzzy, quantity, 'alias', `I think you meant ${fuzzy}. If not, the snack oracle apologises.`) : null
 }
 
 type OpenFoodFactsProduct = {
