@@ -12,8 +12,11 @@ export interface FoodEstimate {
 export type FoodLookupErrorCode = 'network' | 'missing-calories'
 
 export class FoodLookupError extends Error {
-  constructor(public code: FoodLookupErrorCode) {
+  code: FoodLookupErrorCode
+
+  constructor(code: FoodLookupErrorCode) {
     super(code)
+    this.code = code
     this.name = 'FoodLookupError'
   }
 }
@@ -35,7 +38,7 @@ const LOCAL_FOOD_GROUPS: Record<string, Record<string, number>> = {
     wrap: 450, 'chicken wrap': 450, salad: 250, 'caesar salad': 450, soup: 250,
     'chicken soup': 300, pasta: 600, rice: 250, curry: 700, 'pizza slice': 280, pizza: 900,
     burger: 650, fries: 350, chips: 350, omelette: 300, 'chicken breast': 280, egg: 75,
-    'boiled egg': 75, 'scrambled eggs': 220, 'cheese on toast': 350, 'cheese toast': 350,
+    'boiled egg': 75, 'scrambled eggs': 220, 'cheese on toast': 350,
     'cheese toastie': 450, 'toasted cheese sandwich': 450, 'ham and cheese sandwich': 450,
     'tuna mayo sandwich': 450, 'beans on toast': 400, 'egg on toast': 220,
     'avocado toast': 300, 'chicken and rice': 550, 'chicken rice': 550,
@@ -68,6 +71,13 @@ const FOOD_ALIASES: Record<string, string> = {
   'toast with jam': 'jam toast',
 }
 
+const CANONICAL_FOOD_ALIASES: Record<string, string> = {
+  'toast with cheese': 'cheese on toast',
+  'cheesy toast': 'cheese on toast',
+  'cheese toast': 'cheese on toast',
+  'melted cheese on toast': 'cheese on toast',
+}
+
 const COMMON_TYPOS: Record<string, string> = {
   cheries: 'cherry',
   creap: 'crepe',
@@ -97,12 +107,13 @@ const SINGULAR_WORDS: Record<string, string> = {
 }
 
 const COMBO_PHRASES = new Set([
-  'cheese on toast', 'ham and cheese sandwich', 'beans on toast', 'egg on toast', 'chicken and rice',
+  'ham and cheese sandwich', 'beans on toast', 'egg on toast', 'chicken and rice',
   'pasta with sauce', 'pasta and sauce', 'crepe with nutella', 'pancake with syrup',
   'yoghurt with berries', 'coffee with oat milk', 'coffee with milk', 'tea with milk',
 ])
 
 const PORTION_NOTES: Record<string, string> = {
+  'cheese on toast': 'Assuming one fairly normal cheese-on-toast situation. The cheese may have other ideas.',
   cherry: 'Assuming a small bowl-ish serving.',
   cherries: 'Assuming a small bowl-ish serving.',
   crepe: 'Assuming one plain-ish crepe before toppings start causing trouble.',
@@ -186,6 +197,11 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
   if (exact) {
     const isCombo = COMBO_PHRASES.has(lookupPhrase)
     return createLocalEstimate(query, lookupPhrase, quantity, isCombo ? 'combo' : 'local', isCombo ? 'This is snack algebra, not a court statement.' : undefined, isCombo ? comboTerms(lookupPhrase) : undefined)
+  }
+
+  const canonical = CANONICAL_FOOD_ALIASES[lookupPhrase]
+  if (canonical && LOCAL_ESTIMATES[canonical]) {
+    return createLocalEstimate(query, canonical, quantity, 'alias')
   }
 
   const alias = FOOD_ALIASES[lookupPhrase]
