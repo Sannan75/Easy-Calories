@@ -17,34 +17,66 @@ export class FoodLookupError extends Error {
   }
 }
 
-const LOCAL_ESTIMATES: Record<string, number> = {
-  banana: 105,
-  apple: 95,
-  coffee: 40,
-  'coffee with milk': 40,
-  'tea with milk': 30,
-  toast: 90,
-  'buttered toast': 150,
-  'cheese toastie': 450,
-  porridge: 220,
-  oats: 220,
-  soup: 250,
-  'chicken soup': 300,
-  sandwich: 400,
-  'chicken sandwich': 450,
-  'chicken wrap': 450,
-  salad: 250,
-  'caesar salad': 450,
-  pasta: 600,
-  rice: 250,
-  'chicken breast': 280,
-  egg: 75,
-  'boiled egg': 75,
-  crisps: 180,
-  'chocolate bar': 230,
-  yoghurt: 150,
-  'pizza slice': 280,
-  'ready meal': 600,
+const LOCAL_FOOD_GROUPS: Record<string, Record<string, number>> = {
+  fruit: {
+    banana: 105, apple: 95, orange: 65, pear: 100, grapes: 70, cherries: 90, cherry: 90,
+    strawberries: 50, strawberry: 50, blueberries: 85, blueberry: 85, raspberries: 65,
+    raspberry: 65, mango: 200, pineapple: 80, watermelon: 45, kiwi: 45, peach: 60, plum: 30,
+  },
+  breakfast: {
+    porridge: 220, oats: 220, cereal: 180, granola: 250, yoghurt: 150, yogurt: 150,
+    croissant: 230, pancake: 175, pancakes: 350, crepe: 160, crepes: 320, waffle: 220,
+    toast: 90, 'buttered toast': 150, 'jam toast': 160, 'peanut butter toast': 250,
+  },
+  meals: {
+    sandwich: 400, 'chicken sandwich': 450, 'cheese sandwich': 400, 'ham sandwich': 380,
+    wrap: 450, 'chicken wrap': 450, salad: 250, 'caesar salad': 450, soup: 250,
+    'chicken soup': 300, pasta: 600, rice: 250, curry: 700, 'pizza slice': 280, pizza: 900,
+    burger: 650, fries: 350, chips: 350, omelette: 300, 'chicken breast': 280, egg: 75,
+    'boiled egg': 75, 'scrambled eggs': 220, 'cheese toastie': 450, 'ready meal': 600,
+  },
+  snacks: {
+    crisps: 180, 'chocolate bar': 230, chocolate: 230, biscuit: 70, biscuits: 140,
+    cookie: 160, 'cake slice': 350, muffin: 400, nuts: 180, cheese: 120, popcorn: 150,
+  },
+  drinks: {
+    coffee: 40, 'coffee with milk': 40, latte: 150, cappuccino: 120, tea: 30,
+    'tea with milk': 30, 'orange juice': 110, juice: 110, wine: 160, beer: 180,
+  },
+}
+
+const LOCAL_ESTIMATES: Record<string, number> = Object.assign({}, ...Object.values(LOCAL_FOOD_GROUPS))
+
+const FOOD_ALIASES: Record<string, string> = {
+  cherries: 'cherry',
+  crepes: 'crepe',
+  yoghurt: 'yogurt',
+  'choc bar': 'chocolate bar',
+  cuppa: 'tea with milk',
+  brew: 'tea with milk',
+}
+
+const SINGULAR_FORMS: Record<string, string> = {
+  cherries: 'cherry',
+  strawberries: 'strawberry',
+  blueberries: 'blueberry',
+  raspberries: 'raspberry',
+  tomatoes: 'tomato',
+  potatoes: 'potato',
+  crepes: 'crepe',
+  pancakes: 'pancake',
+  biscuits: 'biscuit',
+  eggs: 'egg',
+  sandwiches: 'sandwich',
+}
+
+const PORTION_NOTES: Record<string, string> = {
+  cherry: 'Assuming a small bowl-ish serving.',
+  cherries: 'Assuming a small bowl-ish serving.',
+  crepe: 'Assuming one plain-ish crepe before toppings start causing trouble.',
+  grapes: 'Assuming a small bunch.',
+  pasta: 'Assuming a normal plate, not a theatrical mountain.',
+  wine: 'Assuming a normal glass. Optimistic, perhaps.',
 }
 
 const normalise = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ')
@@ -52,29 +84,54 @@ const normalise = (value: string) => value.toLowerCase().trim().replace(/[^a-z0-
 const QUANTITY_WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4 }
 
 function extractQuantity(value: string) {
-  const match = value.match(/^(one|two|three|four|[1-4])\b\s*/)
-  if (!match) return { quantity: 1, food: value }
+  const match = value.match(/^(one|two|three|four|[1-4])\b\s*(?:x\b\s*)?/)
+  if (!match) return { quantity: 1, food: value, explicit: false }
   return {
     quantity: QUANTITY_WORDS[match[1]] ?? Number(match[1]),
     food: value.slice(match[0].length).trim(),
+    explicit: true,
+  }
+}
+
+function createLocalEstimate(query: string, key: string, quantity: number, partial = false): FoodEstimate {
+  const unitCalories = LOCAL_ESTIMATES[key]
+  return {
+    name: query.trim(),
+    calories: unitCalories * quantity,
+    quantity,
+    unitCalories,
+    source: 'local',
+    note: PORTION_NOTES[key] ?? (partial ? `Using ${key} maths. Close enough for notebook work.` : undefined),
   }
 }
 
 export async function estimateFoodByName(query: string): Promise<FoodEstimate | null> {
   const normalised = normalise(query)
   if (!normalised) return null
-  const { quantity, food } = extractQuantity(normalised)
+  const { quantity, food, explicit } = extractQuantity(normalised)
   if (!food) return null
 
+  // Explicit counts describe individual items, so "two crepes" uses the one-crepe entry.
+  if (explicit) {
+    const unitKey = FOOD_ALIASES[food] ?? SINGULAR_FORMS[food]
+    if (unitKey && LOCAL_ESTIMATES[unitKey]) return createLocalEstimate(query, unitKey, quantity)
+  }
+
   const exact = LOCAL_ESTIMATES[food]
-  if (exact) return { name: query.trim(), calories: exact * quantity, quantity, unitCalories: exact, source: 'local' }
+  if (exact) return createLocalEstimate(query, food, quantity)
+
+  const alias = FOOD_ALIASES[food]
+  if (alias && LOCAL_ESTIMATES[alias]) return createLocalEstimate(query, alias, quantity)
+
+  const singular = SINGULAR_FORMS[food]
+  if (singular && LOCAL_ESTIMATES[singular]) return createLocalEstimate(query, singular, quantity)
 
   const partial = Object.keys(LOCAL_ESTIMATES)
     .sort((a, b) => b.length - a.length)
     .find((knownFood) => food.includes(knownFood) || (food.length >= 4 && knownFood.includes(food)))
 
   return partial
-    ? { name: query.trim(), calories: LOCAL_ESTIMATES[partial] * quantity, quantity, unitCalories: LOCAL_ESTIMATES[partial], source: 'local', note: `Using ${partial} maths. Close enough for notebook work.` }
+    ? createLocalEstimate(query, partial, quantity, true)
     : null
 }
 
