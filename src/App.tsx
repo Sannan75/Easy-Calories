@@ -3,6 +3,7 @@ import type { CSSProperties, FocusEvent } from 'react'
 import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection, RecentFood } from './types'
 import { emptyData, loadData, normaliseData, saveData } from './storage'
 import { estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
+import { dedupeFavourites, normaliseFoodName } from './utils/foodKey'
 
 type Screen = 'today' | 'favourites' | 'history' | 'settings'
 
@@ -31,8 +32,8 @@ const todayKey = () => {
 const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
 const totalFor = (day?: DayLog) => day?.entries.reduce((sum, item) => sum + item.calories, 0) ?? 0
 const roughly = (value: number) => `roughly ${value.toLocaleString()} kcals`
-const normaliseFoodName = (name: string) => name.toLowerCase().trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ')
 const recentKey = (name: string, calories: number) => `${normaliseFoodName(name)}|${Math.round(calories / 10) * 10}`
+const upsertFavourite = (favourites: FavouriteFood[], next: FavouriteFood) => [next, ...favourites.filter((food) => normaliseFoodName(food.name) !== normaliseFoodName(next.name))]
 
 function summaryFor(total: number) {
   if (total < 700) return 'So far this is less a food day and more a rumour.'
@@ -82,7 +83,7 @@ function App() {
           ...current.days,
           [date]: { date, entries: [...(current.days[date]?.entries ?? []), entry] },
         },
-        favourites: favourite ? [...current.favourites, favourite] : current.favourites,
+        favourites: favourite ? upsertFavourite(current.favourites, favourite) : current.favourites,
         recentFoods: [recent, ...current.recentFoods.filter((food) => recentKey(food.name, food.calories) !== key)].slice(0, 12),
       }
     })
@@ -101,8 +102,22 @@ function App() {
 
   const saveFavourite = (name: string, calories: number, defaultMeal: MealSection) => {
     const favourite: FavouriteFood = { id: uid(), name: name.trim(), calories, defaultMeal, createdAt: new Date().toISOString() }
-    setData((current) => ({ ...current, favourites: [...current.favourites, favourite] }))
-    setToast('Saved among the usual suspects.')
+    const exists = data.favourites.some((food) => normaliseFoodName(food.name) === normaliseFoodName(name))
+    setData((current) => ({ ...current, favourites: upsertFavourite(current.favourites, favourite) }))
+    setToast(exists ? 'Already suspicious. Updated the paperwork.' : 'Added to Usual Suspects.')
+  }
+
+  const toggleFavourite = (name: string, calories: number, defaultMeal: MealSection) => {
+    const key = normaliseFoodName(name)
+    const exists = data.favourites.some((food) => normaliseFoodName(food.name) === key)
+    if (exists) {
+      setData((current) => ({ ...current, favourites: current.favourites.filter((food) => normaliseFoodName(food.name) !== key) }))
+      setToast(Math.random() > .5 ? 'Removed from Usual Suspects.' : 'The notebook has stopped side-eyeing this one.')
+      return
+    }
+    const favourite: FavouriteFood = { id: uid(), name: name.trim(), calories, defaultMeal, createdAt: new Date().toISOString() }
+    setData((current) => ({ ...current, favourites: upsertFavourite(current.favourites, favourite) }))
+    setToast('Added to Usual Suspects.')
   }
 
   const today = data.days[todayKey()]
@@ -122,15 +137,16 @@ function App() {
         }} onDismissPromotion={() => setPendingPromotion(null)} onRecentAdd={(food) => {
           addEntry(food.name, food.calories, food.meal)
           setToast('The notebook remembers. Slightly worrying, but useful.')
-        }} onAdd={addEntry} onDelete={removeEntry} onFavourite={saveFavourite} onClear={() => {
+        }} onAdd={addEntry} favourites={data.favourites} onDelete={removeEntry} onToggleFavourite={toggleFavourite} onClear={() => {
           if (window.confirm('Clear today’s evidence? The crumbs will retain legal counsel.')) {
             const date = todayKey()
             setData((current) => ({ ...current, days: { ...current.days, [date]: { date, entries: [] } } }))
             setToast('Today cleared. A fresh and suspiciously tidy page.')
           }
         }} />}
-        {screen === 'favourites' && <FavouritesScreen favourites={data.favourites} onAdd={(f) => addEntry(f.name, f.calories, f.defaultMeal)} onDelete={(id) => {
-          setData((current) => ({ ...current, favourites: current.favourites.filter((f) => f.id !== id) }))
+        {screen === 'favourites' && <FavouritesScreen favourites={data.favourites} onAdd={(f) => addEntry(f.name, f.calories, f.defaultMeal)} onDelete={(name) => {
+          const key = normaliseFoodName(name)
+          setData((current) => ({ ...current, favourites: current.favourites.filter((f) => normaliseFoodName(f.name) !== key) }))
           setToast('Favourite removed. It knows what it did.')
         }} />}
         {screen === 'history' && <HistoryScreen days={data.days} selectedDate={selectedDate} onSelect={setSelectedDate} onUseAgain={(entry) => {
@@ -158,16 +174,17 @@ function App() {
   )
 }
 
-function TodayScreen({ day, recentFoods, promotion, onPromote, onDismissPromotion, onRecentAdd, onAdd, onDelete, onFavourite, onClear }: {
+function TodayScreen({ day, recentFoods, favourites, promotion, onPromote, onDismissPromotion, onRecentAdd, onAdd, onDelete, onToggleFavourite, onClear }: {
   day?: DayLog
   recentFoods: RecentFood[]
+  favourites: FavouriteFood[]
   promotion: FavouriteFood | null
   onPromote: () => void
   onDismissPromotion: () => void
   onRecentAdd: (food: RecentFood) => void
   onAdd: (name: string, calories: number, meal: MealSection, saveAsFavourite?: boolean) => void
   onDelete: (id: string) => void
-  onFavourite: (name: string, calories: number, meal: MealSection) => void
+  onToggleFavourite: (name: string, calories: number, meal: MealSection) => void
   onClear: () => void
 }) {
   const [formOpen, setFormOpen] = useState(false)
@@ -202,10 +219,12 @@ function TodayScreen({ day, recentFoods, promotion, onPromote, onDismissPromotio
           <div className="meal-title"><div className="meal-icon">{meal.icon}</div><div><h3>{meal.label}</h3><span>{roughly(subtotal)}</span></div>
             <button className="round-button" aria-label={`Add ${meal.label}`} onClick={() => { setDefaultMeal(meal.id); setFormOpen(true) }}>+</button>
           </div>
-          {entries.length ? <ul className="food-list">{entries.map((entry) => <li key={entry.id}>
+          {entries.length ? <ul className="food-list">{entries.map((entry) => {
+            const isFavourite = favourites.some((food) => normaliseFoodName(food.name) === normaliseFoodName(entry.name))
+            return <li key={entry.id}>
             <div><strong>{entry.name}</strong><span>about {entry.calories.toLocaleString()} kcals</span></div>
-            <div className="item-actions"><button aria-label={`Save ${entry.name} as favourite`} onClick={() => onFavourite(entry.name, entry.calories, entry.meal)}>♡</button><button aria-label={`Delete ${entry.name}`} onClick={() => onDelete(entry.id)}>×</button></div>
-          </li>)}</ul> : <p className="empty-copy">{meal.empty}</p>}
+            <div className="item-actions"><button className={`heart-button ${isFavourite ? 'active' : ''}`} aria-label={isFavourite ? `Remove ${entry.name} from favourites` : `Save ${entry.name} as favourite`} aria-pressed={isFavourite} onClick={() => onToggleFavourite(entry.name, entry.calories, entry.meal)}>{isFavourite ? '♥' : '♡'}</button><button aria-label={`Delete ${entry.name}`} onClick={() => onDelete(entry.id)}>×</button></div>
+          </li>})}</ul> : <p className="empty-copy">{meal.empty}</p>}
         </article>
       })}
     </div>
@@ -340,10 +359,11 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
 }
 
 function FavouritesScreen({ favourites, onAdd, onDelete }: { favourites: FavouriteFood[]; onAdd: (f: FavouriteFood) => void; onDelete: (id: string) => void }) {
+  const uniqueFavourites = useMemo(() => dedupeFavourites(favourites), [favourites])
   return <div className="screen"><PageIntro eyebrow="The regulars" title="Usual suspects" copy="Your repeat foods live here. Tap once and one joins today—tiny administrative miracle." />
-    {favourites.length ? <div className="stack">{favourites.map((f) => <article className="favourite-card" key={f.id}>
-      <button className="favourite-main" onClick={() => onAdd(f)}><span className="favourite-icon">♡</span><span><strong>{f.name}</strong><small>about {f.calories.toLocaleString()} kcals · {f.defaultMeal}</small></span><span className="add-chip">+ Add</span></button>
-      <button className="delete-row" onClick={() => onDelete(f.id)}>Remove from suspects</button>
+    {uniqueFavourites.length ? <div className="stack">{uniqueFavourites.map((f) => <article className="favourite-card" key={normaliseFoodName(f.name)}>
+      <button className="favourite-main" onClick={() => onAdd(f)}><span className="favourite-icon">♥</span><span><strong>{f.name}</strong><small>about {f.calories.toLocaleString()} kcals · {f.defaultMeal}</small></span><span className="add-chip">+ Add</span></button>
+      <button className="delete-row" onClick={() => onDelete(f.name)}>Remove from suspects</button>
     </article>)}</div> : <EmptyState icon="♡" title="Save the usual suspects here." copy="Favourites are for repeat foods. Save one while logging, or tap the heart beside anything on Today." />}
   </div>
 }
@@ -385,7 +405,7 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
     <section className="settings-card"><div className="settings-icon">↥</div><div><h3>Manual backup</h3><p>Keep your food lore somewhere safe. The file is yours; nothing leaves this device by itself.</p></div><div className="button-pair"><button className="secondary-button" onClick={exportData}>Export JSON</button><button className="secondary-button" onClick={() => inputRef.current?.click()}>Import JSON</button><input className="visually-hidden" ref={inputRef} type="file" accept="application/json,.json" onChange={(e) => importData(e.target.files?.[0])} /></div></section>
     <section className="settings-card"><div className="settings-icon">⌁</div><div><h3>Stored on this device</h3><p>No account, no cloud, no mysterious wellness empire. Your notebook stays in localStorage; only barcodes you choose to look up are sent to Open Food Facts.</p></div></section>
     <button className="danger-button" onClick={onClearAll}>Erase all notebook data</button>
-    <p className="tiny-note">Easy Calories v0.4.0 · rough arithmetic, not health advice. The vibes are free.</p>
+    <p className="tiny-note">Easy Calories v0.4.1 · rough arithmetic, not health advice. The vibes are free.</p>
   </div>
 }
 

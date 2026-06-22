@@ -7,6 +7,8 @@ Leading quantities such as `two ham sandwiches` or `2 ham sandwiches` are recogn
 
 Recent foods are stored locally for one-tap repeat logging, with the latest 12 deduplicated by normalised name and approximate calories. History entries can also be reused, and frequently repeated foods may be promoted to favourites.
 
+Favourites are unique by normalised food name. Hearts on Today toggle saved state immediately, and older duplicate favourites are collapsed to the newest entry during load or import.
+
 ## Run locally
 
 Requires Node.js 20 or newer.
