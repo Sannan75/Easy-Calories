@@ -2,15 +2,24 @@ import type { AppData } from './types'
 
 const STORAGE_KEY = 'easy-calories-data-v1'
 
-export const emptyData = (): AppData => ({ version: 1, days: {}, favourites: [] })
+export const emptyData = (): AppData => ({ version: 2, days: {}, favourites: [], recentFoods: [] })
+
+export function normaliseData(value: unknown): AppData | null {
+  if (!value || typeof value !== 'object') return null
+  const data = value as { version?: number; days?: unknown; favourites?: unknown; recentFoods?: unknown }
+  if (!data.days || typeof data.days !== 'object' || !Array.isArray(data.favourites)) return null
+  if (data.version === 1) {
+    return { version: 2, days: data.days as AppData['days'], favourites: data.favourites as AppData['favourites'], recentFoods: [] }
+  }
+  if (data.version === 2 && Array.isArray(data.recentFoods)) return data as AppData
+  return null
+}
 
 export function loadData(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return emptyData()
-    const parsed = JSON.parse(raw) as Partial<AppData>
-    if (parsed.version !== 1 || !parsed.days || !Array.isArray(parsed.favourites)) return emptyData()
-    return parsed as AppData
+    return normaliseData(JSON.parse(raw)) ?? emptyData()
   } catch {
     return emptyData()
   }
@@ -18,10 +27,4 @@ export function loadData(): AppData {
 
 export function saveData(data: AppData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-}
-
-export function isValidImport(value: unknown): value is AppData {
-  if (!value || typeof value !== 'object') return false
-  const data = value as Partial<AppData>
-  return data.version === 1 && Boolean(data.days) && typeof data.days === 'object' && Array.isArray(data.favourites)
 }

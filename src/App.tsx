@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, FocusEvent } from 'react'
-import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection } from './types'
-import { emptyData, isValidImport, loadData, saveData } from './storage'
+import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection, RecentFood } from './types'
+import { emptyData, loadData, normaliseData, saveData } from './storage'
 import { estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
 
 type Screen = 'today' | 'favourites' | 'history' | 'settings'
@@ -31,6 +31,8 @@ const todayKey = () => {
 const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
 const totalFor = (day?: DayLog) => day?.entries.reduce((sum, item) => sum + item.calories, 0) ?? 0
 const roughly = (value: number) => `roughly ${value.toLocaleString()} kcals`
+const normaliseFoodName = (name: string) => name.toLowerCase().trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ')
+const recentKey = (name: string, calories: number) => `${normaliseFoodName(name)}|${Math.round(calories / 10) * 10}`
 
 function summaryFor(total: number) {
   if (total < 700) return 'So far this is less a food day and more a rumour.'
@@ -44,6 +46,8 @@ function App() {
   const [screen, setScreen] = useState<Screen>('today')
   const [toast, setToast] = useState('')
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [lastLogged, setLastLogged] = useState<FoodLogEntry | null>(null)
+  const [pendingPromotion, setPendingPromotion] = useState<FavouriteFood | null>(null)
 
   useEffect(() => saveData(data), [data])
   useEffect(() => {
@@ -52,6 +56,17 @@ function App() {
     return () => window.clearTimeout(timer)
   }, [toast])
 
+  useEffect(() => {
+    if (!lastLogged) return
+    const key = recentKey(lastLogged.name, lastLogged.calories)
+    const appearances = Object.values(data.days).flatMap((day) => day.entries).filter((entry) => recentKey(entry.name, entry.calories) === key).length
+    const alreadyFavourite = data.favourites.some((food) => normaliseFoodName(food.name) === normaliseFoodName(lastLogged.name))
+    if (appearances >= 3 && !alreadyFavourite) {
+      setPendingPromotion({ id: uid(), name: lastLogged.name, calories: lastLogged.calories, defaultMeal: lastLogged.meal, createdAt: lastLogged.createdAt })
+    }
+    setLastLogged(null)
+  }, [data, lastLogged])
+
   const addEntry = (name: string, calories: number, meal: MealSection, saveAsFavourite = false) => {
     const date = todayKey()
     const entry: FoodLogEntry = { id: uid(), name: name.trim(), calories, meal, createdAt: new Date().toISOString() }
@@ -59,6 +74,8 @@ function App() {
       const favourite: FavouriteFood | null = saveAsFavourite
         ? { id: uid(), name: entry.name, calories, defaultMeal: meal, createdAt: entry.createdAt }
         : null
+      const recent: RecentFood = { id: uid(), name: entry.name, calories, meal, lastUsedAt: entry.createdAt }
+      const key = recentKey(entry.name, calories)
       return {
         ...current,
         days: {
@@ -66,8 +83,10 @@ function App() {
           [date]: { date, entries: [...(current.days[date]?.entries ?? []), entry] },
         },
         favourites: favourite ? [...current.favourites, favourite] : current.favourites,
+        recentFoods: [recent, ...current.recentFoods.filter((food) => recentKey(food.name, food.calories) !== key)].slice(0, 12),
       }
     })
+    setLastLogged(entry)
     setToast(addedMessages[Math.floor(Math.random() * addedMessages.length)])
   }
 
@@ -96,7 +115,14 @@ function App() {
       </header>
 
       <main>
-        {screen === 'today' && <TodayScreen day={today} onAdd={addEntry} onDelete={removeEntry} onFavourite={saveFavourite} onClear={() => {
+        {screen === 'today' && <TodayScreen day={today} recentFoods={data.recentFoods} promotion={pendingPromotion} onPromote={() => {
+          if (!pendingPromotion) return
+          saveFavourite(pendingPromotion.name, pendingPromotion.calories, pendingPromotion.defaultMeal)
+          setPendingPromotion(null)
+        }} onDismissPromotion={() => setPendingPromotion(null)} onRecentAdd={(food) => {
+          addEntry(food.name, food.calories, food.meal)
+          setToast('The notebook remembers. Slightly worrying, but useful.')
+        }} onAdd={addEntry} onDelete={removeEntry} onFavourite={saveFavourite} onClear={() => {
           if (window.confirm('Clear today’s evidence? The crumbs will retain legal counsel.')) {
             const date = todayKey()
             setData((current) => ({ ...current, days: { ...current.days, [date]: { date, entries: [] } } }))
@@ -107,7 +133,10 @@ function App() {
           setData((current) => ({ ...current, favourites: current.favourites.filter((f) => f.id !== id) }))
           setToast('Favourite removed. It knows what it did.')
         }} />}
-        {screen === 'history' && <HistoryScreen days={data.days} selectedDate={selectedDate} onSelect={setSelectedDate} />}
+        {screen === 'history' && <HistoryScreen days={data.days} selectedDate={selectedDate} onSelect={setSelectedDate} onUseAgain={(entry) => {
+          addEntry(entry.name, entry.calories, entry.meal)
+          setToast(Math.random() > .5 ? 'Reheated the paperwork.' : 'Added again. History repeats itself, but snackier.')
+        }} />}
         {screen === 'settings' && <SettingsScreen data={data} onImport={(next) => { setData(next); setToast('Backup restored. Past-you came prepared.') }} onClearAll={() => {
           if (window.confirm('Erase absolutely everything? This is the big red-ish button, minus the judgement.')) {
             setData(emptyData()); setToast('All data cleared. The notebook has amnesia.')
@@ -129,8 +158,13 @@ function App() {
   )
 }
 
-function TodayScreen({ day, onAdd, onDelete, onFavourite, onClear }: {
+function TodayScreen({ day, recentFoods, promotion, onPromote, onDismissPromotion, onRecentAdd, onAdd, onDelete, onFavourite, onClear }: {
   day?: DayLog
+  recentFoods: RecentFood[]
+  promotion: FavouriteFood | null
+  onPromote: () => void
+  onDismissPromotion: () => void
+  onRecentAdd: (food: RecentFood) => void
   onAdd: (name: string, calories: number, meal: MealSection, saveAsFavourite?: boolean) => void
   onDelete: (id: string) => void
   onFavourite: (name: string, calories: number, meal: MealSection) => void
@@ -147,6 +181,16 @@ function TodayScreen({ day, onAdd, onDelete, onFavourite, onClear }: {
       <p className="total-label">Today, approximately</p>
       <div className="day-total">{total.toLocaleString()} <small>kcals</small></div>
       <p className="summary">{summaryFor(total)}</p>
+    </section>
+
+    {promotion && <aside className="promotion-card"><div><strong>This one keeps turning up.</strong><p>Promote {promotion.name} to Usual Suspect?</p></div><div><button className="promotion-yes" onClick={onPromote}>Yes, make it suspicious</button><button onClick={onDismissPromotion}>Not now</button></div></aside>}
+
+    <section className="recents-section">
+      <div className="recents-heading"><div><span className="eyebrow">Recently accused</span><h2>Quick returners</h2></div><p>Tap one and it joins today. Due process optional.</p></div>
+      {recentFoods.length ? <div className="recent-strip">{recentFoods.map((food) => {
+        const meal = meals.find((item) => item.id === food.meal)
+        return <button className="recent-chip" key={food.id} onClick={() => onRecentAdd(food)}><span aria-hidden="true">{meal?.icon}</span><strong>{food.name}</strong><small>{roughly(food.calories)}</small></button>
+      })}</div> : <p className="recent-empty">Log something once and it may return here, like a tiny edible boomerang.</p>}
     </section>
 
     <div className="section-heading"><div><span className="eyebrow">The evidence</span><h2>Your food notebook</h2></div>{day?.entries.length ? <button className="text-button" onClick={onClear}>Clear today</button> : null}</div>
@@ -304,12 +348,16 @@ function FavouritesScreen({ favourites, onAdd, onDelete }: { favourites: Favouri
   </div>
 }
 
-function HistoryScreen({ days, selectedDate, onSelect }: { days: Record<string, DayLog>; selectedDate: string | null; onSelect: (date: string | null) => void }) {
+function HistoryScreen({ days, selectedDate, onSelect, onUseAgain }: { days: Record<string, DayLog>; selectedDate: string | null; onSelect: (date: string | null) => void; onUseAgain: (entry: FoodLogEntry) => void }) {
   const recent = useMemo(() => Object.values(days).filter((d) => d.entries.length).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30), [days])
   if (selectedDate) {
     const day = days[selectedDate]
     return <div className="screen"><button className="back-button" onClick={() => onSelect(null)}>← Recent days</button><PageIntro eyebrow="A previous episode" title={formatStoredDate(selectedDate)} copy={`${roughly(totalFor(day))} in total. Historical crumbs included.`} />
-      <div className="meal-card history-detail">{day?.entries.map((entry) => <div className="history-item" key={entry.id}><div><strong>{entry.name}</strong><small>{entry.meal}</small></div><span>about {entry.calories.toLocaleString()} kcals</span></div>)}</div>
+      <div className="history-groups">{meals.map((meal) => {
+        const entries = day?.entries.filter((entry) => entry.meal === meal.id) ?? []
+        if (!entries.length) return null
+        return <section className="meal-card history-detail" key={meal.id}><h3><span aria-hidden="true">{meal.icon}</span> {meal.label}</h3>{entries.map((entry) => <div className="history-item" key={entry.id}><div><strong>{entry.name}</strong><small>about {entry.calories.toLocaleString()} kcals</small></div><button onClick={() => onUseAgain(entry)}>Use again</button></div>)}</section>
+      })}</div>
     </div>
   }
   return <div className="screen"><PageIntro eyebrow="Previously, on lunch" title="Recent history" copy="A calm archive of meals gone by. No graphs plotting against you." />
@@ -327,8 +375,8 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
   const importData = async (file?: File) => {
     if (!file) return
     try {
-      const parsed: unknown = JSON.parse(await file.text())
-      if (!isValidImport(parsed)) throw new Error('invalid')
+      const parsed = normaliseData(JSON.parse(await file.text()))
+      if (!parsed) throw new Error('invalid')
       if (window.confirm('Replace this notebook with the backup? Current evidence will make a quiet exit.')) onImport(parsed)
     } catch { window.alert('That file does not look like an Easy Calories backup. It may be wearing a disguise.') }
     if (inputRef.current) inputRef.current.value = ''
@@ -337,7 +385,7 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
     <section className="settings-card"><div className="settings-icon">↥</div><div><h3>Manual backup</h3><p>Keep your food lore somewhere safe. The file is yours; nothing leaves this device by itself.</p></div><div className="button-pair"><button className="secondary-button" onClick={exportData}>Export JSON</button><button className="secondary-button" onClick={() => inputRef.current?.click()}>Import JSON</button><input className="visually-hidden" ref={inputRef} type="file" accept="application/json,.json" onChange={(e) => importData(e.target.files?.[0])} /></div></section>
     <section className="settings-card"><div className="settings-icon">⌁</div><div><h3>Stored on this device</h3><p>No account, no cloud, no mysterious wellness empire. Your notebook stays in localStorage; only barcodes you choose to look up are sent to Open Food Facts.</p></div></section>
     <button className="danger-button" onClick={onClearAll}>Erase all notebook data</button>
-    <p className="tiny-note">Easy Calories v0.3.0 · rough arithmetic, not health advice. The vibes are free.</p>
+    <p className="tiny-note">Easy Calories v0.4.0 · rough arithmetic, not health advice. The vibes are free.</p>
   </div>
 }
 

@@ -22,8 +22,15 @@ export interface FavouriteFood extends FoodItem {
   createdAt: string
 }
 
+export interface RecentFood extends FoodItem {
+  id: string
+  meal: MealSection
+  lastUsedAt: string
+}
+
 export interface AppData {
-  version: 1
+  version: 2
   days: Record<string, DayLog>
   favourites: FavouriteFood[]
+  recentFoods: RecentFood[]
 }

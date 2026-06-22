@@ -5,6 +5,8 @@ A mobile-first, judgement-free and deliberately approximate calorie notebook. Lo
 Food-name estimates use a small offline dictionary. Optional manual barcode lookup requests product data from Open Food Facts, while keeping notebook data on the device.
 Leading quantities such as `two ham sandwiches` or `2 ham sandwiches` are recognised, and estimated foods include a 1–4 quantity picker with per-item and total calories.
 
+Recent foods are stored locally for one-tap repeat logging, with the latest 12 deduplicated by normalised name and approximate calories. History entries can also be reused, and frequently repeated foods may be promoted to favourites.
+
 ## Run locally
 
 Requires Node.js 20 or newer.
