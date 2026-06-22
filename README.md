@@ -1,6 +1,8 @@
 # Easy Calories
 
-A mobile-first, judgement-free and deliberately approximate calorie notebook. Everything stays in the browser's `localStorage`; there is no account or backend.
+A mobile-first, judgement-free and deliberately approximate calorie notebook. Logs and favourites stay in the browser's `localStorage`; there is no account or backend.
+
+Food-name estimates use a small offline dictionary. Optional manual barcode lookup requests product data from Open Food Facts, while keeping notebook data on the device.
 
 ## Run locally
 
