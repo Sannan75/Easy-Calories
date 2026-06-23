@@ -1,0 +1,3391 @@
+[
+  {
+    "id": 1,
+    "name": "Chicken breast, cooked, skinless",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 165,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (50g)", "grams": 50 },
+      { "label": "Half breast (90g)", "grams": 90 },
+      { "label": "Medium (100g)", "grams": 100 },
+      { "label": "Normal breast (150g)", "grams": 150 },
+      { "label": "Large breast (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chicken breast", "breast", "cooked chicken breast"]
+  },
+  {
+    "id": 2,
+    "name": "Chicken breast, raw, skinless",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 120,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal breast (150g)", "grams": 150 },
+      { "label": "Large breast (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["raw chicken breast"]
+  },
+  {
+    "id": 3,
+    "name": "Chicken thigh, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 220,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One thigh (130g)", "grams": 130 },
+      { "label": "Two thighs (260g)", "grams": 260 },
+      { "label": "100g", "grams": 100 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chicken thigh", "thigh"]
+  },
+  {
+    "id": 4,
+    "name": "Chicken drumstick, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 215,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One drumstick (90g)", "grams": 90 },
+      { "label": "Two drumsticks (180g)", "grams": 180 },
+      { "label": "100g", "grams": 100 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["drumstick", "chicken drumstick"]
+  },
+  {
+    "id": 5,
+    "name": "Chicken wing, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 250,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two wings (100g)", "grams": 100 },
+      { "label": "Four wings (200g)", "grams": 200 },
+      { "label": "Six wings (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chicken wing", "wings"]
+  },
+  {
+    "id": 6,
+    "name": "Roast chicken",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 190,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Large portion (220g)", "grams": 220 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["roast chicken"]
+  },
+  {
+    "id": 7,
+    "name": "Turkey breast, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 135,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["turkey breast", "turkey"]
+  },
+  {
+    "id": 8,
+    "name": "Turkey mince, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 180,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["turkey mince"]
+  },
+  {
+    "id": 9,
+    "name": "Bacon, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 540,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One rasher (25g)", "grams": 25 },
+      { "label": "Two rashers (50g)", "grams": 50 },
+      { "label": "Three rashers (75g)", "grams": 75 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["bacon", "cooked bacon", "streaky bacon"]
+  },
+  {
+    "id": 10,
+    "name": "Bacon medallions",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 150,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One medallion (45g)", "grams": 45 },
+      { "label": "Two medallions (90g)", "grams": 90 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["bacon medallion", "medallion bacon"]
+  },
+  {
+    "id": 11,
+    "name": "Ham",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 145,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One slice (25g)", "grams": 25 },
+      { "label": "Two slices (50g)", "grams": 50 },
+      { "label": "Normal portion (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["ham", "sliced ham", "cooked ham"]
+  },
+  {
+    "id": 12,
+    "name": "Pork chop, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 230,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small chop (120g)", "grams": 120 },
+      { "label": "Normal chop (160g)", "grams": 160 },
+      { "label": "Large chop (220g)", "grams": 220 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["pork chop"]
+  },
+  {
+    "id": 13,
+    "name": "Pork loin, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 200,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["pork loin", "pork"]
+  },
+  {
+    "id": 14,
+    "name": "Sausages",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One sausage (60g)", "grams": 60 },
+      { "label": "Two sausages (120g)", "grams": 120 },
+      { "label": "Three sausages (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["sausage", "sausages", "banger", "bangers"]
+  },
+  {
+    "id": 15,
+    "name": "Beef mince, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 250,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["beef mince", "mince", "ground beef"]
+  },
+  {
+    "id": 16,
+    "name": "Lean beef mince, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 180,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["lean mince", "lean beef mince"]
+  },
+  {
+    "id": 17,
+    "name": "Steak, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 250,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small steak (150g)", "grams": 150 },
+      { "label": "Normal steak (200g)", "grams": 200 },
+      { "label": "Large steak (280g)", "grams": 280 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["steak"]
+  },
+  {
+    "id": 18,
+    "name": "Roast beef",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 220,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two slices (80g)", "grams": 80 },
+      { "label": "Normal portion (120g)", "grams": 120 },
+      { "label": "Large portion (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["roast beef"]
+  },
+  {
+    "id": 19,
+    "name": "Lamb chop, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One chop (100g)", "grams": 100 },
+      { "label": "Two chops (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["lamb chop", "lamb"]
+  },
+  {
+    "id": 20,
+    "name": "Lamb mince, cooked",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 280,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["lamb mince"]
+  },
+  {
+    "id": 21,
+    "name": "Chorizo",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 455,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (30g)", "grams": 30 },
+      { "label": "Normal (50g)", "grams": 50 },
+      { "label": "Large (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chorizo"]
+  },
+  {
+    "id": 22,
+    "name": "Pepperoni",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 500,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (20g)", "grams": 20 },
+      { "label": "Normal (35g)", "grams": 35 },
+      { "label": "Generous (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["pepperoni"]
+  },
+  {
+    "id": 23,
+    "name": "Salami",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 430,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Few slices (30g)", "grams": 30 },
+      { "label": "Normal (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["salami"]
+  },
+  {
+    "id": 24,
+    "name": "Chicken nuggets",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 270,
+    "servingType": "weight",
+    "servings": [
+      { "label": "4 nuggets (80g)", "grams": 80 },
+      { "label": "6 nuggets (120g)", "grams": 120 },
+      { "label": "9 nuggets (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["nuggets", "chicken nuggets"]
+  },
+  {
+    "id": 25,
+    "name": "Breaded chicken fillet",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 240,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One fillet (130g)", "grams": 130 },
+      { "label": "Two fillets (260g)", "grams": 260 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["breaded chicken", "chicken fillet"]
+  },
+  {
+    "id": 26,
+    "name": "Chicken Kiev",
+    "group": "Meat / Poultry",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One Kiev (170g)", "grams": 170 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chicken kiev"]
+  },
+  {
+    "id": 27,
+    "name": "Salmon fillet",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 208,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small fillet (100g)", "grams": 100 },
+      { "label": "Normal fillet (130g)", "grams": 130 },
+      { "label": "Large fillet (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["salmon", "salmon fillet"]
+  },
+  {
+    "id": 28,
+    "name": "Smoked salmon",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 180,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (50g)", "grams": 50 },
+      { "label": "Normal (80g)", "grams": 80 },
+      { "label": "Large (120g)", "grams": 120 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["smoked salmon"]
+  },
+  {
+    "id": 29,
+    "name": "Cod fillet",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 105,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small fillet (100g)", "grams": 100 },
+      { "label": "Normal fillet (150g)", "grams": 150 },
+      { "label": "Large fillet (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cod", "cod fillet"]
+  },
+  {
+    "id": 30,
+    "name": "Haddock fillet",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 110,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small fillet (100g)", "grams": 100 },
+      { "label": "Normal fillet (150g)", "grams": 150 },
+      { "label": "Large fillet (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["haddock"]
+  },
+  {
+    "id": 31,
+    "name": "Tuna, canned in spring water",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 110,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half tin (80g)", "grams": 80 },
+      { "label": "Whole tin (160g)", "grams": 160 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["tuna", "tuna in water", "canned tuna"]
+  },
+  {
+    "id": 32,
+    "name": "Tuna, canned in oil",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 190,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half tin (80g)", "grams": 80 },
+      { "label": "Whole tin (160g)", "grams": 160 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["tuna in oil"]
+  },
+  {
+    "id": 33,
+    "name": "Mackerel",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 260,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small fillet (100g)", "grams": 100 },
+      { "label": "Normal fillet (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mackerel"]
+  },
+  {
+    "id": 34,
+    "name": "Sardines",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 210,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half tin (60g)", "grams": 60 },
+      { "label": "Whole tin (120g)", "grams": 120 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["sardines", "sardine"]
+  },
+  {
+    "id": 35,
+    "name": "Prawns",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 100,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (75g)", "grams": 75 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Large portion (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["prawns", "shrimp"]
+  },
+  {
+    "id": 36,
+    "name": "Fish fingers",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 230,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two fingers (56g)", "grams": 56 },
+      { "label": "Three fingers (84g)", "grams": 84 },
+      { "label": "Four fingers (112g)", "grams": 112 },
+      { "label": "Six fingers (168g)", "grams": 168 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["fish fingers", "fish finger"]
+  },
+  {
+    "id": 37,
+    "name": "Breaded cod",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 220,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One piece (130g)", "grams": 130 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["breaded cod"]
+  },
+  {
+    "id": 38,
+    "name": "Scampi",
+    "group": "Fish / Seafood",
+    "kcalPer100g": 250,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["scampi"]
+  },
+  {
+    "id": 39,
+    "name": "Fish pie",
+    "group": "Fish / Seafood",
+    "kcalFixed": 500,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 250 },
+      { "label": "Normal serving", "kcal": 500 },
+      { "label": "Large serving", "kcal": 675 }
+    ],
+    "aliases": ["fish pie"]
+  },
+  {
+    "id": 40,
+    "name": "Fish and chips",
+    "group": "Fish / Seafood",
+    "kcalFixed": 900,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small portion", "kcal": 650 },
+      { "label": "Normal portion", "kcal": 900 },
+      { "label": "Large portion", "kcal": 1200 }
+    ],
+    "aliases": ["fish and chips", "fish & chips"]
+  },
+  {
+    "id": 41,
+    "name": "Egg",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 75,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One egg", "kcal": 75 },
+      { "label": "Two eggs", "kcal": 150 },
+      { "label": "Three eggs", "kcal": 225 }
+    ],
+    "aliases": ["egg", "eggs", "whole egg"]
+  },
+  {
+    "id": 42,
+    "name": "Boiled egg",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 75,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One egg", "kcal": 75 },
+      { "label": "Two eggs", "kcal": 150 }
+    ],
+    "aliases": ["boiled egg", "hard boiled egg", "soft boiled egg"]
+  },
+  {
+    "id": 43,
+    "name": "Fried egg",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 110,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One egg", "kcal": 110 },
+      { "label": "Two eggs", "kcal": 220 }
+    ],
+    "aliases": ["fried egg"]
+  },
+  {
+    "id": 44,
+    "name": "Scrambled eggs",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small (2 eggs)", "kcal": 160 },
+      { "label": "Normal (3 eggs)", "kcal": 220 },
+      { "label": "Large (4 eggs)", "kcal": 300 }
+    ],
+    "aliases": ["scrambled eggs", "scrambled egg"]
+  },
+  {
+    "id": 45,
+    "name": "Omelette",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small (2 eggs)", "kcal": 220 },
+      { "label": "Normal (3 eggs)", "kcal": 300 },
+      { "label": "Large (4 eggs)", "kcal": 400 }
+    ],
+    "aliases": ["omelette", "omelet"]
+  },
+  {
+    "id": 46,
+    "name": "Egg white",
+    "group": "Eggs / Dairy",
+    "kcalFixed": 17,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One egg white", "kcal": 17 },
+      { "label": "Two egg whites", "kcal": 34 },
+      { "label": "Three egg whites", "kcal": 51 }
+    ],
+    "aliases": ["egg white", "egg whites"]
+  },
+  {
+    "id": 47,
+    "name": "Cheddar cheese",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 400,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small sprinkle (15g)", "grams": 15 },
+      { "label": "Normal portion (30g)", "grams": 30 },
+      { "label": "Big cheese situation (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cheddar", "cheddar cheese", "cheese"]
+  },
+  {
+    "id": 48,
+    "name": "Cheese",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 400,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small sprinkle (15g)", "grams": 15 },
+      { "label": "Normal portion (30g)", "grams": 30 },
+      { "label": "Big cheese situation (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cheese", "generic cheese"]
+  },
+  {
+    "id": 49,
+    "name": "Mozzarella",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 280,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (30g)", "grams": 30 },
+      { "label": "Half ball (60g)", "grams": 60 },
+      { "label": "Whole ball (125g)", "grams": 125 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mozzarella"]
+  },
+  {
+    "id": 50,
+    "name": "Feta",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 265,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small crumble (30g)", "grams": 30 },
+      { "label": "Normal (50g)", "grams": 50 },
+      { "label": "Large (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["feta", "feta cheese"]
+  },
+  {
+    "id": 51,
+    "name": "Parmesan",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 430,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Light grating (10g)", "grams": 10 },
+      { "label": "Normal grating (20g)", "grams": 20 },
+      { "label": "Heavy grating (35g)", "grams": 35 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["parmesan", "parmigiano"]
+  },
+  {
+    "id": 52,
+    "name": "Halloumi",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 320,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two slices (60g)", "grams": 60 },
+      { "label": "Four slices (120g)", "grams": 120 },
+      { "label": "Half block (125g)", "grams": 125 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["halloumi"]
+  },
+  {
+    "id": 53,
+    "name": "Cream cheese",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 340,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Thin spread (15g)", "grams": 15 },
+      { "label": "Normal (30g)", "grams": 30 },
+      { "label": "Generous (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cream cheese", "philadelphia"]
+  },
+  {
+    "id": 54,
+    "name": "Cottage cheese",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 100,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cottage cheese"]
+  },
+  {
+    "id": 55,
+    "name": "Greek yoghurt",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 100,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pot (100g)", "grams": 100 },
+      { "label": "Normal bowl (150g)", "grams": 150 },
+      { "label": "Large bowl (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["greek yoghurt", "greek yogurt", "greek yog"]
+  },
+  {
+    "id": 56,
+    "name": "Natural yoghurt",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 90,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pot (100g)", "grams": 100 },
+      { "label": "Normal (150g)", "grams": 150 },
+      { "label": "Large (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["natural yoghurt", "natural yogurt", "plain yoghurt", "yoghurt", "yogurt"]
+  },
+  {
+    "id": 57,
+    "name": "Low-fat yoghurt",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 60,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pot (100g)", "grams": 100 },
+      { "label": "Normal pot (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["low fat yoghurt", "low-fat yogurt", "diet yoghurt"]
+  },
+  {
+    "id": 58,
+    "name": "Skyr yoghurt",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 65,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pot (100g)", "grams": 100 },
+      { "label": "Normal pot (150g)", "grams": 150 },
+      { "label": "Large pot (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["skyr", "skyr yoghurt", "skyr yogurt"]
+  },
+  {
+    "id": 59,
+    "name": "Milk, semi-skimmed",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 50,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Splash in tea (30ml)", "grams": 30 },
+      { "label": "With cereal (150ml)", "grams": 150 },
+      { "label": "Glass (250ml)", "grams": 250 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["semi skimmed milk", "semi-skimmed milk", "milk"]
+  },
+  {
+    "id": 60,
+    "name": "Milk, whole",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 65,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Splash in tea (30ml)", "grams": 30 },
+      { "label": "With cereal (150ml)", "grams": 150 },
+      { "label": "Glass (250ml)", "grams": 250 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["whole milk", "full fat milk"]
+  },
+  {
+    "id": 61,
+    "name": "Milk, skimmed",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 35,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Splash in tea (30ml)", "grams": 30 },
+      { "label": "With cereal (150ml)", "grams": 150 },
+      { "label": "Glass (250ml)", "grams": 250 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["skimmed milk", "skim milk"]
+  },
+  {
+    "id": 62,
+    "name": "Oat milk",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 45,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Splash in coffee (30ml)", "grams": 30 },
+      { "label": "With cereal (150ml)", "grams": 150 },
+      { "label": "Glass (250ml)", "grams": 250 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["oat milk", "oatly"]
+  },
+  {
+    "id": 63,
+    "name": "Soya milk",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 40,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Splash in coffee (30ml)", "grams": 30 },
+      { "label": "With cereal (150ml)", "grams": 150 },
+      { "label": "Glass (250ml)", "grams": 250 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["soya milk", "soy milk"]
+  },
+  {
+    "id": 64,
+    "name": "Butter",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 720,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Scraping (5g)", "grams": 5 },
+      { "label": "Normal (10g)", "grams": 10 },
+      { "label": "Generous (15g)", "grams": 15 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["butter"]
+  },
+  {
+    "id": 65,
+    "name": "Margarine / spread",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 540,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Scraping (5g)", "grams": 5 },
+      { "label": "Normal (10g)", "grams": 10 },
+      { "label": "Generous (15g)", "grams": 15 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["margarine", "spread", "flora", "lurpak"]
+  },
+  {
+    "id": 66,
+    "name": "Double cream",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 450,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Drizzle (20ml)", "grams": 20 },
+      { "label": "Splash (40ml)", "grams": 40 },
+      { "label": "Generous pour (80ml)", "grams": 80 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["double cream", "heavy cream"]
+  },
+  {
+    "id": 67,
+    "name": "Single cream",
+    "group": "Eggs / Dairy",
+    "kcalPer100g": 195,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Drizzle (30ml)", "grams": 30 },
+      { "label": "Normal pour (60ml)", "grams": 60 },
+      { "label": "Generous (100ml)", "grams": 100 },
+      { "label": "Custom amount", "grams": null }
+    ],
+    "aliases": ["single cream", "pouring cream"]
+  },
+  {
+    "id": 68,
+    "name": "Rice, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 130,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["rice", "white rice", "cooked rice"]
+  },
+  {
+    "id": 69,
+    "name": "Basmati rice, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 130,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["basmati", "basmati rice"]
+  },
+  {
+    "id": 70,
+    "name": "Brown rice, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 125,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["brown rice"]
+  },
+  {
+    "id": 71,
+    "name": "Pasta, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 160,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (120g)", "grams": 120 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["pasta", "cooked pasta", "penne", "fusilli", "rigatoni"]
+  },
+  {
+    "id": 72,
+    "name": "Spaghetti, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 160,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (120g)", "grams": 120 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["spaghetti"]
+  },
+  {
+    "id": 73,
+    "name": "Noodles, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 140,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (120g)", "grams": 120 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["noodles"]
+  },
+  {
+    "id": 74,
+    "name": "Egg noodles, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 150,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (120g)", "grams": 120 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["egg noodles"]
+  },
+  {
+    "id": 75,
+    "name": "Potato, boiled",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 85,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One small potato (100g)", "grams": 100 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["boiled potato", "new potatoes", "potato"]
+  },
+  {
+    "id": 76,
+    "name": "Jacket potato",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small jacket", "kcal": 200 },
+      { "label": "Normal jacket", "kcal": 300 },
+      { "label": "Large jacket", "kcal": 400 }
+    ],
+    "aliases": ["jacket potato", "baked potato", "jacket spud"]
+  },
+  {
+    "id": 77,
+    "name": "Mashed potato",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 110,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small scoop (100g)", "grams": 100 },
+      { "label": "Normal portion (200g)", "grams": 200 },
+      { "label": "Large portion (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mash", "mashed potato", "mashed potatoes"]
+  },
+  {
+    "id": 78,
+    "name": "Roast potatoes",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 180,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two roasties (100g)", "grams": 100 },
+      { "label": "Three roasties (150g)", "grams": 150 },
+      { "label": "Four roasties (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["roast potatoes", "roasties"]
+  },
+  {
+    "id": 79,
+    "name": "Chips / fries",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chips", "fries", "oven chips", "french fries"]
+  },
+  {
+    "id": 80,
+    "name": "Sweet potato",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 86,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small (150g)", "grams": 150 },
+      { "label": "Normal (200g)", "grams": 200 },
+      { "label": "Large (280g)", "grams": 280 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["sweet potato"]
+  },
+  {
+    "id": 81,
+    "name": "Couscous, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 110,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["couscous"]
+  },
+  {
+    "id": 82,
+    "name": "Quinoa, cooked",
+    "group": "Carbs / Starches / Bread",
+    "kcalPer100g": 120,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Large portion (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["quinoa"]
+  },
+  {
+    "id": 83,
+    "name": "Bread slice",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 90,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 90 },
+      { "label": "Two slices", "kcal": 180 }
+    ],
+    "aliases": ["bread", "slice of bread", "bread slice"]
+  },
+  {
+    "id": 84,
+    "name": "White bread slice",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 90,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 90 },
+      { "label": "Two slices", "kcal": 180 }
+    ],
+    "aliases": ["white bread", "white slice"]
+  },
+  {
+    "id": 85,
+    "name": "Brown bread slice",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 85,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 85 },
+      { "label": "Two slices", "kcal": 170 }
+    ],
+    "aliases": ["brown bread", "wholemeal bread", "wholemeal slice"]
+  },
+  {
+    "id": 86,
+    "name": "Toast",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 90,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 90 },
+      { "label": "Two slices", "kcal": 180 }
+    ],
+    "aliases": ["toast", "slice of toast"]
+  },
+  {
+    "id": 87,
+    "name": "Buttered toast",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 150,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 150 },
+      { "label": "Two slices", "kcal": 300 }
+    ],
+    "aliases": ["buttered toast", "toast with butter", "toast and butter"]
+  },
+  {
+    "id": 88,
+    "name": "Bagel",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 250,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One bagel", "kcal": 250 },
+      { "label": "One bagel with cream cheese", "kcal": 350 }
+    ],
+    "aliases": ["bagel"]
+  },
+  {
+    "id": 89,
+    "name": "Pitta bread",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 170,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One pitta", "kcal": 170 },
+      { "label": "Two pittas", "kcal": 340 }
+    ],
+    "aliases": ["pitta", "pitta bread", "pita bread"]
+  },
+  {
+    "id": 90,
+    "name": "Wrap / tortilla",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 200,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One wrap", "kcal": 200 },
+      { "label": "Two wraps", "kcal": 400 }
+    ],
+    "aliases": ["wrap", "tortilla", "flour tortilla"]
+  },
+  {
+    "id": 91,
+    "name": "Naan bread",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half naan", "kcal": 150 },
+      { "label": "One naan", "kcal": 300 }
+    ],
+    "aliases": ["naan", "naan bread", "plain naan"]
+  },
+  {
+    "id": 92,
+    "name": "Garlic bread",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Two slices", "kcal": 230 },
+      { "label": "Normal portion", "kcal": 350 },
+      { "label": "Half baguette", "kcal": 500 }
+    ],
+    "aliases": ["garlic bread", "garlic baguette"]
+  },
+  {
+    "id": 93,
+    "name": "Crumpet",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 100,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One crumpet", "kcal": 100 },
+      { "label": "Two crumpets", "kcal": 200 }
+    ],
+    "aliases": ["crumpet", "crumpets"]
+  },
+  {
+    "id": 94,
+    "name": "Croissant",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 230,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One croissant", "kcal": 230 },
+      { "label": "Two croissants", "kcal": 460 }
+    ],
+    "aliases": ["croissant"]
+  },
+  {
+    "id": 95,
+    "name": "Brioche roll",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 180,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One roll", "kcal": 180 }
+    ],
+    "aliases": ["brioche", "brioche roll"]
+  },
+  {
+    "id": 96,
+    "name": "Pancake",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 175,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One pancake", "kcal": 175 },
+      { "label": "Two pancakes", "kcal": 350 },
+      { "label": "Three pancakes", "kcal": 525 }
+    ],
+    "aliases": ["pancake", "american pancake"]
+  },
+  {
+    "id": 97,
+    "name": "Crepe",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One crepe", "kcal": 160 },
+      { "label": "Two crepes", "kcal": 320 }
+    ],
+    "aliases": ["crepe", "thin pancake"]
+  },
+  {
+    "id": 98,
+    "name": "Waffle",
+    "group": "Carbs / Starches / Bread",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One waffle", "kcal": 220 },
+      { "label": "Two waffles", "kcal": 440 }
+    ],
+    "aliases": ["waffle", "waffles"]
+  },
+  {
+    "id": 99,
+    "name": "Porridge",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small bowl", "kcal": 180 },
+      { "label": "Normal bowl", "kcal": 220 },
+      { "label": "Large bowl", "kcal": 330 }
+    ],
+    "aliases": ["porridge", "oatmeal"]
+  },
+  {
+    "id": 100,
+    "name": "Oats",
+    "group": "Breakfast / Cereal",
+    "kcalPer100g": 380,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small bowl dry (40g)", "grams": 40 },
+      { "label": "Normal bowl dry (60g)", "grams": 60 },
+      { "label": "Large bowl dry (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["oats", "rolled oats", "porridge oats"]
+  },
+  {
+    "id": 101,
+    "name": "Overnight oats",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small jar", "kcal": 280 },
+      { "label": "Normal jar", "kcal": 350 },
+      { "label": "Large jar", "kcal": 450 }
+    ],
+    "aliases": ["overnight oats"]
+  },
+  {
+    "id": 102,
+    "name": "Cornflakes",
+    "group": "Breakfast / Cereal",
+    "kcalPer100g": 370,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small bowl (30g)", "grams": 30 },
+      { "label": "Normal bowl (40g)", "grams": 40 },
+      { "label": "Large bowl (60g)", "grams": 60 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cornflakes", "corn flakes", "kellogs cornflakes"]
+  },
+  {
+    "id": 103,
+    "name": "Cornflakes with milk",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small bowl", "kcal": 170 },
+      { "label": "Normal bowl", "kcal": 220 },
+      { "label": "Large bowl", "kcal": 310 }
+    ],
+    "aliases": ["cornflakes with milk"]
+  },
+  {
+    "id": 104,
+    "name": "Weetabix",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 150,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One biscuit", "kcal": 75 },
+      { "label": "Two biscuits", "kcal": 150 },
+      { "label": "Three biscuits", "kcal": 225 }
+    ],
+    "aliases": ["weetabix", "weetabix biscuits"]
+  },
+  {
+    "id": 105,
+    "name": "Weetabix with milk",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Two biscuits with milk", "kcal": 220 },
+      { "label": "Three biscuits with milk", "kcal": 295 }
+    ],
+    "aliases": ["weetabix with milk"]
+  },
+  {
+    "id": 106,
+    "name": "Bran flakes",
+    "group": "Breakfast / Cereal",
+    "kcalPer100g": 350,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small bowl (30g)", "grams": 30 },
+      { "label": "Normal bowl (45g)", "grams": 45 },
+      { "label": "Large bowl (60g)", "grams": 60 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["bran flakes"]
+  },
+  {
+    "id": 107,
+    "name": "Granola",
+    "group": "Breakfast / Cereal",
+    "kcalPer100g": 450,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (40g)", "grams": 40 },
+      { "label": "Normal portion (60g)", "grams": 60 },
+      { "label": "Large portion (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["granola"]
+  },
+  {
+    "id": 108,
+    "name": "Muesli",
+    "group": "Breakfast / Cereal",
+    "kcalPer100g": 360,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small bowl (45g)", "grams": 45 },
+      { "label": "Normal bowl (60g)", "grams": 60 },
+      { "label": "Large bowl (80g)", "grams": 80 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["muesli"]
+  },
+  {
+    "id": 109,
+    "name": "Cereal with milk",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small bowl", "kcal": 170 },
+      { "label": "Normal bowl", "kcal": 220 },
+      { "label": "Large bowl", "kcal": 300 }
+    ],
+    "aliases": ["cereal", "cereal with milk", "bowl of cereal"]
+  },
+  {
+    "id": 110,
+    "name": "Toast with jam",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 160 },
+      { "label": "Two slices", "kcal": 320 }
+    ],
+    "aliases": ["toast with jam", "jam on toast"]
+  },
+  {
+    "id": 111,
+    "name": "Toast with peanut butter",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 250,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 250 },
+      { "label": "Two slices", "kcal": 500 }
+    ],
+    "aliases": ["toast with peanut butter", "peanut butter on toast"]
+  },
+  {
+    "id": 112,
+    "name": "Toast with marmite",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 110,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 110 },
+      { "label": "Two slices", "kcal": 220 }
+    ],
+    "aliases": ["toast with marmite", "marmite on toast", "marmite toast"]
+  },
+  {
+    "id": 113,
+    "name": "Bacon sandwich",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 450 }
+    ],
+    "aliases": ["bacon sandwich", "bacon sarnie", "bacon butty", "bacon bap"]
+  },
+  {
+    "id": 114,
+    "name": "Sausage sandwich",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 500,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 500 }
+    ],
+    "aliases": ["sausage sandwich", "sausage sarnie", "sausage butty", "sausage bap"]
+  },
+  {
+    "id": 115,
+    "name": "Egg on toast",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One egg on toast", "kcal": 220 },
+      { "label": "Two eggs on toast", "kcal": 310 }
+    ],
+    "aliases": ["egg on toast", "eggs on toast"]
+  },
+  {
+    "id": 116,
+    "name": "Beans on toast",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 400,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 280 },
+      { "label": "Two slices", "kcal": 400 }
+    ],
+    "aliases": ["beans on toast"]
+  },
+  {
+    "id": 117,
+    "name": "Avocado toast",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 300 },
+      { "label": "Two slices", "kcal": 500 }
+    ],
+    "aliases": ["avocado toast", "avo toast"]
+  },
+  {
+    "id": 118,
+    "name": "Full English breakfast",
+    "group": "Breakfast / Cereal",
+    "kcalFixed": 900,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small-ish plate", "kcal": 650 },
+      { "label": "Normal plate", "kcal": 900 },
+      { "label": "Heroic plate", "kcal": 1200 }
+    ],
+    "aliases": ["full english", "full english breakfast", "fry up", "english breakfast", "full fry up"]
+  },
+  {
+    "id": 121,
+    "name": "Banana",
+    "group": "Fruit",
+    "kcalFixed": 105,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small banana", "kcal": 80 },
+      { "label": "Normal banana", "kcal": 105 },
+      { "label": "Large banana", "kcal": 135 }
+    ],
+    "aliases": ["banana"]
+  },
+  {
+    "id": 122,
+    "name": "Apple",
+    "group": "Fruit",
+    "kcalFixed": 95,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small apple", "kcal": 70 },
+      { "label": "Normal apple", "kcal": 95 },
+      { "label": "Large apple", "kcal": 120 }
+    ],
+    "aliases": ["apple"]
+  },
+  {
+    "id": 123,
+    "name": "Orange",
+    "group": "Fruit",
+    "kcalFixed": 65,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small orange", "kcal": 45 },
+      { "label": "Normal orange", "kcal": 65 },
+      { "label": "Large orange", "kcal": 85 }
+    ],
+    "aliases": ["orange"]
+  },
+  {
+    "id": 124,
+    "name": "Pear",
+    "group": "Fruit",
+    "kcalFixed": 100,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small pear", "kcal": 75 },
+      { "label": "Normal pear", "kcal": 100 },
+      { "label": "Large pear", "kcal": 130 }
+    ],
+    "aliases": ["pear"]
+  },
+  {
+    "id": 125,
+    "name": "Grapes",
+    "group": "Fruit",
+    "kcalPer100g": 69,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Bowl-ish (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["grapes", "grape"]
+  },
+  {
+    "id": 126,
+    "name": "Cherries",
+    "group": "Fruit",
+    "kcalPer100g": 63,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Bowl-ish (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cherries", "cherry"]
+  },
+  {
+    "id": 127,
+    "name": "Strawberries",
+    "group": "Fruit",
+    "kcalPer100g": 32,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Normal bowl (150g)", "grams": 150 },
+      { "label": "Large bowl (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["strawberries", "strawberry"]
+  },
+  {
+    "id": 128,
+    "name": "Blueberries",
+    "group": "Fruit",
+    "kcalPer100g": 57,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["blueberries", "blueberry"]
+  },
+  {
+    "id": 129,
+    "name": "Raspberries",
+    "group": "Fruit",
+    "kcalPer100g": 52,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["raspberries", "raspberry"]
+  },
+  {
+    "id": 130,
+    "name": "Mango",
+    "group": "Fruit",
+    "kcalPer100g": 60,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Half mango (150g)", "grams": 150 },
+      { "label": "Whole mango (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mango"]
+  },
+  {
+    "id": 131,
+    "name": "Pineapple",
+    "group": "Fruit",
+    "kcalPer100g": 50,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["pineapple"]
+  },
+  {
+    "id": 132,
+    "name": "Watermelon",
+    "group": "Fruit",
+    "kcalPer100g": 30,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small slice (150g)", "grams": 150 },
+      { "label": "Normal slice (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["watermelon"]
+  },
+  {
+    "id": 133,
+    "name": "Kiwi",
+    "group": "Fruit",
+    "kcalPer100g": 60,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One kiwi (75g)", "grams": 75 },
+      { "label": "Two kiwis (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["kiwi", "kiwi fruit"]
+  },
+  {
+    "id": 134,
+    "name": "Peach",
+    "group": "Fruit",
+    "kcalPer100g": 40,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One peach (130g)", "grams": 130 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["peach"]
+  },
+  {
+    "id": 135,
+    "name": "Plum",
+    "group": "Fruit",
+    "kcalPer100g": 45,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One plum (65g)", "grams": 65 },
+      { "label": "Two plums (130g)", "grams": 130 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["plum"]
+  },
+  {
+    "id": 136,
+    "name": "Melon",
+    "group": "Fruit",
+    "kcalPer100g": 35,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small slice (150g)", "grams": 150 },
+      { "label": "Normal slice (250g)", "grams": 250 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["melon", "cantaloupe", "honeydew"]
+  },
+  {
+    "id": 137,
+    "name": "Dried fruit",
+    "group": "Fruit",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (30g)", "grams": 30 },
+      { "label": "Normal portion (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["dried fruit", "mixed dried fruit"]
+  },
+  {
+    "id": 138,
+    "name": "Raisins",
+    "group": "Fruit",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (30g)", "grams": 30 },
+      { "label": "Normal portion (50g)", "grams": 50 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["raisins", "sultanas", "currants"]
+  },
+  {
+    "id": 139,
+    "name": "Broccoli",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 35,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Large portion (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["broccoli"]
+  },
+  {
+    "id": 140,
+    "name": "Carrots",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 41,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One carrot (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["carrots", "carrot"]
+  },
+  {
+    "id": 141,
+    "name": "Peas",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 80,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (60g)", "grams": 60 },
+      { "label": "Normal portion (100g)", "grams": 100 },
+      { "label": "Large portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["peas"]
+  },
+  {
+    "id": 142,
+    "name": "Sweetcorn",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 96,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (80g)", "grams": 80 },
+      { "label": "Normal portion (130g)", "grams": 130 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["sweetcorn", "corn", "sweet corn"]
+  },
+  {
+    "id": 143,
+    "name": "Green beans",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 35,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["green beans", "french beans", "fine beans"]
+  },
+  {
+    "id": 144,
+    "name": "Spinach",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 23,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Handful raw (30g)", "grams": 30 },
+      { "label": "Normal cooked portion (100g)", "grams": 100 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["spinach", "baby spinach"]
+  },
+  {
+    "id": 145,
+    "name": "Lettuce",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 15,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (30g)", "grams": 30 },
+      { "label": "Normal salad base (60g)", "grams": 60 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["lettuce", "iceberg lettuce", "romaine", "salad leaves"]
+  },
+  {
+    "id": 146,
+    "name": "Cucumber",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 15,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Few slices (50g)", "grams": 50 },
+      { "label": "Quarter cucumber (100g)", "grams": 100 },
+      { "label": "Half cucumber (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cucumber"]
+  },
+  {
+    "id": 147,
+    "name": "Tomato",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 18,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One tomato (100g)", "grams": 100 },
+      { "label": "Two tomatoes (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["tomato", "tomatoes"]
+  },
+  {
+    "id": 148,
+    "name": "Cherry tomatoes",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 18,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (80g)", "grams": 80 },
+      { "label": "Normal portion (130g)", "grams": 130 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cherry tomatoes", "cherry toms"]
+  },
+  {
+    "id": 149,
+    "name": "Onion",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 40,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half onion (60g)", "grams": 60 },
+      { "label": "One onion (120g)", "grams": 120 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["onion", "white onion", "red onion"]
+  },
+  {
+    "id": 150,
+    "name": "Mushrooms",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 22,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mushrooms", "mushroom", "button mushrooms"]
+  },
+  {
+    "id": 151,
+    "name": "Peppers",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 30,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half pepper (75g)", "grams": 75 },
+      { "label": "One pepper (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["peppers", "pepper", "red pepper", "yellow pepper", "capsicum"]
+  },
+  {
+    "id": 152,
+    "name": "Courgette",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 17,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half courgette (100g)", "grams": 100 },
+      { "label": "One courgette (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["courgette", "zucchini"]
+  },
+  {
+    "id": 153,
+    "name": "Cauliflower",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 25,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (100g)", "grams": 100 },
+      { "label": "Normal portion (180g)", "grams": 180 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cauliflower"]
+  },
+  {
+    "id": 154,
+    "name": "Cabbage",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 25,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small portion (80g)", "grams": 80 },
+      { "label": "Normal portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["cabbage", "white cabbage", "savoy cabbage"]
+  },
+  {
+    "id": 155,
+    "name": "Avocado",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 160,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Half avocado (75g)", "grams": 75 },
+      { "label": "Whole avocado (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["avocado", "avo"]
+  },
+  {
+    "id": 156,
+    "name": "Salad",
+    "group": "Vegetables / Salad",
+    "kcalFixed": 250,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Side salad", "kcal": 100 },
+      { "label": "Normal salad", "kcal": 250 },
+      { "label": "Large salad", "kcal": 400 }
+    ],
+    "aliases": ["salad", "garden salad", "mixed salad"]
+  },
+  {
+    "id": 157,
+    "name": "Caesar salad",
+    "group": "Vegetables / Salad",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Side Caesar", "kcal": 250 },
+      { "label": "Main Caesar", "kcal": 450 }
+    ],
+    "aliases": ["caesar salad"]
+  },
+  {
+    "id": 158,
+    "name": "Coleslaw",
+    "group": "Vegetables / Salad",
+    "kcalPer100g": 150,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small spoonful (50g)", "grams": 50 },
+      { "label": "Normal portion (100g)", "grams": 100 },
+      { "label": "Large portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["coleslaw", "slaw"]
+  },
+  {
+    "id": 159,
+    "name": "Cheese on toast",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 350 },
+      { "label": "Two slices", "kcal": 700 }
+    ],
+    "aliases": ["cheese on toast", "toast with cheese", "cheesy toast"]
+  },
+  {
+    "id": 160,
+    "name": "Cheese toastie",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal toastie", "kcal": 450 }
+    ],
+    "aliases": ["cheese toastie", "toastie", "grilled cheese"]
+  },
+  {
+    "id": 161,
+    "name": "Ham and cheese sandwich",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 450 }
+    ],
+    "aliases": ["ham and cheese sandwich", "ham cheese sandwich"]
+  },
+  {
+    "id": 162,
+    "name": "Chicken sandwich",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 450 }
+    ],
+    "aliases": ["chicken sandwich"]
+  },
+  {
+    "id": 163,
+    "name": "Tuna mayo sandwich",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 450 }
+    ],
+    "aliases": ["tuna mayo sandwich", "tuna mayonnaise sandwich", "tuna sandwich"]
+  },
+  {
+    "id": 164,
+    "name": "Egg mayo sandwich",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 430,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal sandwich", "kcal": 430 }
+    ],
+    "aliases": ["egg mayo sandwich", "egg mayonnaise sandwich", "egg sandwich"]
+  },
+  {
+    "id": 165,
+    "name": "Chicken wrap",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 450,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal wrap", "kcal": 450 }
+    ],
+    "aliases": ["chicken wrap"]
+  },
+  {
+    "id": 166,
+    "name": "Falafel wrap",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 500,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal wrap", "kcal": 500 }
+    ],
+    "aliases": ["falafel wrap"]
+  },
+  {
+    "id": 167,
+    "name": "Burger",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 650,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small burger", "kcal": 450 },
+      { "label": "Normal burger", "kcal": 650 },
+      { "label": "Large burger", "kcal": 850 }
+    ],
+    "aliases": ["burger", "hamburger"]
+  },
+  {
+    "id": 168,
+    "name": "Cheeseburger",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 750,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cheeseburger", "kcal": 550 },
+      { "label": "Normal cheeseburger", "kcal": 750 },
+      { "label": "Large cheeseburger", "kcal": 950 }
+    ],
+    "aliases": ["cheeseburger"]
+  },
+  {
+    "id": 169,
+    "name": "Hot dog",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One hot dog", "kcal": 350 }
+    ],
+    "aliases": ["hot dog", "hotdog"]
+  },
+  {
+    "id": 170,
+    "name": "Pizza slice",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 280,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One slice", "kcal": 280 },
+      { "label": "Two slices", "kcal": 560 },
+      { "label": "Three slices", "kcal": 840 }
+    ],
+    "aliases": ["pizza slice", "slice of pizza"]
+  },
+  {
+    "id": 171,
+    "name": "Pizza",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 900,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Two slices", "kcal": 360 },
+      { "label": "Half pizza", "kcal": 450 },
+      { "label": "Three quarters", "kcal": 675 },
+      { "label": "Whole pizza", "kcal": 900 }
+    ],
+    "aliases": ["pizza"]
+  },
+  {
+    "id": 172,
+    "name": "Margherita pizza",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 850,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Two slices", "kcal": 340 },
+      { "label": "Half pizza", "kcal": 425 },
+      { "label": "Whole pizza", "kcal": 850 }
+    ],
+    "aliases": ["margherita pizza", "margherita"]
+  },
+  {
+    "id": 173,
+    "name": "Pepperoni pizza",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 1000,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Two slices", "kcal": 400 },
+      { "label": "Half pizza", "kcal": 500 },
+      { "label": "Whole pizza", "kcal": 1000 }
+    ],
+    "aliases": ["pepperoni pizza"]
+  },
+  {
+    "id": 174,
+    "name": "Lasagne",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 650,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 325 },
+      { "label": "Normal portion", "kcal": 650 },
+      { "label": "Large portion", "kcal": 880 }
+    ],
+    "aliases": ["lasagne", "lasagna"]
+  },
+  {
+    "id": 175,
+    "name": "Spaghetti bolognese",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 650,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 325 },
+      { "label": "Normal portion", "kcal": 650 },
+      { "label": "Large portion", "kcal": 878 }
+    ],
+    "aliases": ["spaghetti bolognese", "bolognese", "spag bol", "spaghetti bol"]
+  },
+  {
+    "id": 177,
+    "name": "Macaroni cheese",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 600,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 300 },
+      { "label": "Normal portion", "kcal": 600 },
+      { "label": "Large portion", "kcal": 810 }
+    ],
+    "aliases": ["macaroni cheese", "mac and cheese", "mac n cheese"]
+  },
+  {
+    "id": 178,
+    "name": "Cottage pie",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 550,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 275 },
+      { "label": "Normal portion", "kcal": 550 },
+      { "label": "Large portion", "kcal": 743 }
+    ],
+    "aliases": ["cottage pie"]
+  },
+  {
+    "id": 179,
+    "name": "Shepherd's pie",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 550,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 275 },
+      { "label": "Normal portion", "kcal": 550 },
+      { "label": "Large portion", "kcal": 743 }
+    ],
+    "aliases": ["shepherd's pie", "shepherds pie"]
+  },
+  {
+    "id": 180,
+    "name": "Chilli con carne",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 650,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 325 },
+      { "label": "Normal portion", "kcal": 650 },
+      { "label": "Large portion", "kcal": 878 }
+    ],
+    "aliases": ["chilli con carne", "chilli", "chili"]
+  },
+  {
+    "id": 181,
+    "name": "Chicken curry",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chicken curry", "curry"]
+  },
+  {
+    "id": 182,
+    "name": "Chicken Madras",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chicken madras", "madras"]
+  },
+  {
+    "id": 183,
+    "name": "Chicken Korma",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chicken korma", "korma"]
+  },
+  {
+    "id": 184,
+    "name": "Chicken Tikka Masala",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 750,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 375 },
+      { "label": "Normal portion", "kcal": 750 },
+      { "label": "Large portion", "kcal": 1013 }
+    ],
+    "aliases": ["chicken tikka masala", "tikka masala", "chicken tikka"]
+  },
+  {
+    "id": 185,
+    "name": "Curry and rice",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 800,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 400 },
+      { "label": "Normal portion", "kcal": 800 },
+      { "label": "Large portion", "kcal": 1080 }
+    ],
+    "aliases": ["curry and rice", "curry with rice"]
+  },
+  {
+    "id": 186,
+    "name": "Thai green curry",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["thai green curry", "green curry"]
+  },
+  {
+    "id": 187,
+    "name": "Stir fry",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 550,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 275 },
+      { "label": "Normal portion", "kcal": 550 },
+      { "label": "Large portion", "kcal": 743 }
+    ],
+    "aliases": ["stir fry", "stir-fry"]
+  },
+  {
+    "id": 188,
+    "name": "Chicken stir fry",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 600,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 300 },
+      { "label": "Normal portion", "kcal": 600 },
+      { "label": "Large portion", "kcal": 810 }
+    ],
+    "aliases": ["chicken stir fry"]
+  },
+  {
+    "id": 189,
+    "name": "Roast dinner",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 800,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small plate", "kcal": 600 },
+      { "label": "Normal plate", "kcal": 800 },
+      { "label": "Big Sunday plate", "kcal": 1100 }
+    ],
+    "aliases": ["roast dinner", "sunday roast", "roast"]
+  },
+  {
+    "id": 190,
+    "name": "Chicken dinner",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chicken dinner"]
+  },
+  {
+    "id": 191,
+    "name": "Pie and mash",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 800,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal portion", "kcal": 800 }
+    ],
+    "aliases": ["pie and mash"]
+  },
+  {
+    "id": 192,
+    "name": "Soup",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 250,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 150 },
+      { "label": "Normal bowl", "kcal": 250 },
+      { "label": "Large bowl", "kcal": 380 }
+    ],
+    "aliases": ["soup"]
+  },
+  {
+    "id": 193,
+    "name": "Chicken soup",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 180 },
+      { "label": "Normal bowl", "kcal": 300 },
+      { "label": "Large bowl", "kcal": 450 }
+    ],
+    "aliases": ["chicken soup"]
+  },
+  {
+    "id": 194,
+    "name": "Tomato soup",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 130 },
+      { "label": "Normal bowl", "kcal": 220 },
+      { "label": "Large bowl", "kcal": 330 }
+    ],
+    "aliases": ["tomato soup"]
+  },
+  {
+    "id": 195,
+    "name": "Lentil soup",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 180 },
+      { "label": "Normal bowl", "kcal": 300 },
+      { "label": "Large bowl", "kcal": 450 }
+    ],
+    "aliases": ["lentil soup"]
+  },
+  {
+    "id": 196,
+    "name": "Baked beans",
+    "group": "Meals / Common Dishes",
+    "kcalPer100g": 180,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small tin (half, 200g)", "grams": 200 },
+      { "label": "Normal tin (415g)", "grams": 415 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["baked beans", "beans", "heinz beans"]
+  },
+  {
+    "id": 198,
+    "name": "Omelette meal",
+    "group": "Meals / Common Dishes",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Plain omelette", "kcal": 300 },
+      { "label": "Filled omelette", "kcal": 350 },
+      { "label": "Large filled omelette", "kcal": 500 }
+    ],
+    "aliases": ["omelette meal", "cheese omelette"]
+  },
+  {
+    "id": 199,
+    "name": "Chicken kebab",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chicken kebab"]
+  },
+  {
+    "id": 200,
+    "name": "Doner kebab",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 900,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small doner", "kcal": 650 },
+      { "label": "Normal doner", "kcal": 900 },
+      { "label": "Large doner", "kcal": 1200 }
+    ],
+    "aliases": ["doner kebab", "donor kebab", "kebab"]
+  },
+  {
+    "id": 202,
+    "name": "Chips, takeaway portion",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 600,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small portion", "kcal": 400 },
+      { "label": "Normal portion", "kcal": 600 },
+      { "label": "Large portion", "kcal": 850 }
+    ],
+    "aliases": ["takeaway chips", "chip shop chips"]
+  },
+  {
+    "id": 203,
+    "name": "Fried chicken pieces",
+    "group": "Takeaway / Fast Food",
+    "kcalPer100g": 280,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two pieces (200g)", "grams": 200 },
+      { "label": "Three pieces (300g)", "grams": 300 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["fried chicken", "kfc style chicken", "chicken pieces"]
+  },
+  {
+    "id": 204,
+    "name": "Chicken burger",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 650,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Normal burger", "kcal": 650 }
+    ],
+    "aliases": ["chicken burger"]
+  },
+  {
+    "id": 205,
+    "name": "Big Mac-style burger",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 550,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One burger", "kcal": 550 }
+    ],
+    "aliases": ["big mac", "big mac style burger", "mcdonalds burger"]
+  },
+  {
+    "id": 206,
+    "name": "Cheeseburger takeaway",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 750,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One burger", "kcal": 750 }
+    ],
+    "aliases": ["takeaway cheeseburger"]
+  },
+  {
+    "id": 207,
+    "name": "Chinese chicken chow mein",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 700,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 350 },
+      { "label": "Normal portion", "kcal": 700 },
+      { "label": "Large portion", "kcal": 945 }
+    ],
+    "aliases": ["chow mein", "chicken chow mein"]
+  },
+  {
+    "id": 208,
+    "name": "Egg fried rice",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 600,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small portion", "kcal": 400 },
+      { "label": "Normal portion", "kcal": 600 },
+      { "label": "Large portion", "kcal": 810 }
+    ],
+    "aliases": ["egg fried rice"]
+  },
+  {
+    "id": 209,
+    "name": "Sweet and sour chicken",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 750,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half portion", "kcal": 375 },
+      { "label": "Normal portion", "kcal": 750 },
+      { "label": "Large portion", "kcal": 1013 }
+    ],
+    "aliases": ["sweet and sour chicken", "sweet and sour"]
+  },
+  {
+    "id": 210,
+    "name": "Indian naan",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half naan", "kcal": 150 },
+      { "label": "One naan", "kcal": 300 }
+    ],
+    "aliases": ["indian naan", "garlic naan", "takeaway naan"]
+  },
+  {
+    "id": 211,
+    "name": "Poppadom",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 65,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One poppadom", "kcal": 65 },
+      { "label": "Two poppadoms", "kcal": 130 },
+      { "label": "Three poppadoms", "kcal": 195 }
+    ],
+    "aliases": ["poppadom", "papadum"]
+  },
+  {
+    "id": 212,
+    "name": "Onion bhaji",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 190,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One bhaji", "kcal": 190 },
+      { "label": "Two bhajis", "kcal": 380 }
+    ],
+    "aliases": ["onion bhaji", "bhaji"]
+  },
+  {
+    "id": 213,
+    "name": "Samosa",
+    "group": "Takeaway / Fast Food",
+    "kcalFixed": 260,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One samosa", "kcal": 260 },
+      { "label": "Two samosas", "kcal": 520 }
+    ],
+    "aliases": ["samosa"]
+  },
+  {
+    "id": 214,
+    "name": "Crisps",
+    "group": "Snacks",
+    "kcalFixed": 180,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small bag (25g)", "kcal": 130 },
+      { "label": "Normal bag (35g)", "kcal": 180 },
+      { "label": "Large sharing bag (150g)", "kcal": 750 }
+    ],
+    "aliases": ["crisps", "packet of crisps", "walkers", "pringles"]
+  },
+  {
+    "id": 215,
+    "name": "Tortilla chips",
+    "group": "Snacks",
+    "kcalPer100g": 500,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (30g)", "grams": 30 },
+      { "label": "Normal serving (50g)", "grams": 50 },
+      { "label": "Large bowl (100g)", "grams": 100 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["tortilla chips", "doritos", "nachos"]
+  },
+  {
+    "id": 216,
+    "name": "Popcorn",
+    "group": "Snacks",
+    "kcalFixed": 150,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small bag", "kcal": 100 },
+      { "label": "Normal bag", "kcal": 150 },
+      { "label": "Cinema size", "kcal": 400 }
+    ],
+    "aliases": ["popcorn"]
+  },
+  {
+    "id": 217,
+    "name": "Chocolate bar",
+    "group": "Snacks",
+    "kcalFixed": 230,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Mini bar (15g)", "kcal": 80 },
+      { "label": "Standard bar (50g)", "kcal": 230 },
+      { "label": "King size bar (85g)", "kcal": 450 }
+    ],
+    "aliases": ["chocolate bar", "kit kat", "twix", "mars bar", "snickers"]
+  },
+  {
+    "id": 218,
+    "name": "Chocolate",
+    "group": "Snacks",
+    "kcalPer100g": 530,
+    "servingType": "weight",
+    "servings": [
+      { "label": "One square (10g)", "grams": 10 },
+      { "label": "Two squares (20g)", "grams": 20 },
+      { "label": "Small portion (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["chocolate", "dark chocolate", "milk chocolate"]
+  },
+  {
+    "id": 219,
+    "name": "Biscuit",
+    "group": "Snacks",
+    "kcalFixed": 70,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One biscuit", "kcal": 70 },
+      { "label": "Two biscuits", "kcal": 140 },
+      { "label": "Three biscuits", "kcal": 210 }
+    ],
+    "aliases": ["biscuit", "biscuits", "rich tea", "bourbon", "custard cream"]
+  },
+  {
+    "id": 220,
+    "name": "Digestive biscuit",
+    "group": "Snacks",
+    "kcalFixed": 80,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One digestive", "kcal": 80 },
+      { "label": "Two digestives", "kcal": 160 },
+      { "label": "Three digestives", "kcal": 240 }
+    ],
+    "aliases": ["digestive", "digestive biscuit", "mcvities digestive"]
+  },
+  {
+    "id": 221,
+    "name": "Cookie",
+    "group": "Snacks",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One cookie", "kcal": 160 },
+      { "label": "Two cookies", "kcal": 320 }
+    ],
+    "aliases": ["cookie", "chocolate chip cookie"]
+  },
+  {
+    "id": 222,
+    "name": "Cake slice",
+    "group": "Snacks",
+    "kcalFixed": 350,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small slice", "kcal": 250 },
+      { "label": "Normal slice", "kcal": 350 },
+      { "label": "Large slice", "kcal": 500 }
+    ],
+    "aliases": ["cake", "slice of cake", "birthday cake"]
+  },
+  {
+    "id": 223,
+    "name": "Muffin",
+    "group": "Snacks",
+    "kcalFixed": 400,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small muffin", "kcal": 250 },
+      { "label": "Normal muffin", "kcal": 400 },
+      { "label": "Large muffin", "kcal": 550 }
+    ],
+    "aliases": ["muffin", "blueberry muffin", "chocolate muffin"]
+  },
+  {
+    "id": 224,
+    "name": "Doughnut",
+    "group": "Snacks",
+    "kcalFixed": 250,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One doughnut", "kcal": 250 },
+      { "label": "Two doughnuts", "kcal": 500 }
+    ],
+    "aliases": ["doughnut", "donut"]
+  },
+  {
+    "id": 225,
+    "name": "Scone",
+    "group": "Snacks",
+    "kcalFixed": 300,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Plain scone", "kcal": 200 },
+      { "label": "Scone with jam", "kcal": 300 },
+      { "label": "Scone with jam and cream", "kcal": 420 }
+    ],
+    "aliases": ["scone"]
+  },
+  {
+    "id": 226,
+    "name": "Nuts",
+    "group": "Snacks",
+    "kcalPer100g": 600,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small handful (25g)", "grams": 25 },
+      { "label": "Big handful (40g)", "grams": 40 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["nuts", "mixed nuts", "trail mix"]
+  },
+  {
+    "id": 227,
+    "name": "Peanut butter",
+    "group": "Snacks",
+    "kcalPer100g": 590,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Thin spread (15g)", "grams": 15 },
+      { "label": "Normal spoonful (30g)", "grams": 30 },
+      { "label": "Generous (45g)", "grams": 45 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["peanut butter"]
+  },
+  {
+    "id": 228,
+    "name": "Jam",
+    "group": "Snacks",
+    "kcalPer100g": 260,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Thin spread (10g)", "grams": 10 },
+      { "label": "Normal spread (20g)", "grams": 20 },
+      { "label": "Thick spread (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["jam", "strawberry jam", "raspberry jam", "marmalade"]
+  },
+  {
+    "id": 229,
+    "name": "Honey",
+    "group": "Snacks",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small drizzle (10g)", "grams": 10 },
+      { "label": "Normal drizzle (20g)", "grams": 20 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["honey"]
+  },
+  {
+    "id": 230,
+    "name": "Nutella",
+    "group": "Snacks",
+    "kcalPer100g": 540,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Thin spread (15g)", "grams": 15 },
+      { "label": "Normal spread (30g)", "grams": 30 },
+      { "label": "Generous spread (45g)", "grams": 45 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["nutella", "chocolate spread"]
+  },
+  {
+    "id": 231,
+    "name": "Hummus",
+    "group": "Snacks",
+    "kcalPer100g": 250,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small dip (50g)", "grams": 50 },
+      { "label": "Normal portion (100g)", "grams": 100 },
+      { "label": "Large portion (150g)", "grams": 150 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["hummus", "houmous", "hoummos"]
+  },
+  {
+    "id": 233,
+    "name": "Crackers",
+    "group": "Snacks",
+    "kcalPer100g": 430,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Two crackers (20g)", "grams": 20 },
+      { "label": "Four crackers (40g)", "grams": 40 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["crackers", "ryvita", "crispbread"]
+  },
+  {
+    "id": 234,
+    "name": "Rice cake",
+    "group": "Snacks",
+    "kcalFixed": 35,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One rice cake", "kcal": 35 },
+      { "label": "Two rice cakes", "kcal": 70 },
+      { "label": "Three rice cakes", "kcal": 105 }
+    ],
+    "aliases": ["rice cake", "rice cakes"]
+  },
+  {
+    "id": 235,
+    "name": "Protein bar",
+    "group": "Snacks",
+    "kcalFixed": 220,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One bar", "kcal": 220 }
+    ],
+    "aliases": ["protein bar", "quest bar", "grenade bar"]
+  },
+  {
+    "id": 236,
+    "name": "Granola bar",
+    "group": "Snacks",
+    "kcalFixed": 190,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One bar", "kcal": 190 }
+    ],
+    "aliases": ["granola bar", "flapjack", "cereal bar", "nakd bar"]
+  },
+  {
+    "id": 237,
+    "name": "Ice cream",
+    "group": "Snacks",
+    "kcalPer100g": 200,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small scoop (60g)", "grams": 60 },
+      { "label": "Two scoops (120g)", "grams": 120 },
+      { "label": "Large bowl (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["ice cream", "gelato", "vanilla ice cream"]
+  },
+  {
+    "id": 238,
+    "name": "Custard",
+    "group": "Snacks",
+    "kcalPer100g": 120,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pour (100g)", "grams": 100 },
+      { "label": "Normal pour (150g)", "grams": 150 },
+      { "label": "Generous pour (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["custard"]
+  },
+  {
+    "id": 239,
+    "name": "Mayonnaise",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 680,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Tablespoon (15g)", "grams": 15 },
+      { "label": "Generous dollop (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["mayonnaise", "mayo", "hellmanns"]
+  },
+  {
+    "id": 240,
+    "name": "Light mayonnaise",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 300,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Tablespoon (15g)", "grams": 15 },
+      { "label": "Generous dollop (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["light mayo", "light mayonnaise", "low fat mayo"]
+  },
+  {
+    "id": 241,
+    "name": "Ketchup",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 100,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Normal squirt (15g)", "grams": 15 },
+      { "label": "Generous amount (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["ketchup", "tomato ketchup", "heinz ketchup"]
+  },
+  {
+    "id": 242,
+    "name": "Brown sauce",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 120,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Normal squirt (15g)", "grams": 15 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["brown sauce", "hp sauce", "daddies sauce"]
+  },
+  {
+    "id": 243,
+    "name": "BBQ sauce",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 170,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Tablespoon (15g)", "grams": 15 },
+      { "label": "Generous amount (30g)", "grams": 30 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["bbq sauce", "barbecue sauce"]
+  },
+  {
+    "id": 244,
+    "name": "Salad dressing",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 350,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Light drizzle (10g)", "grams": 10 },
+      { "label": "Normal (20g)", "grams": 20 },
+      { "label": "Generous (35g)", "grams": 35 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["salad dressing", "vinaigrette", "caesar dressing"]
+  },
+  {
+    "id": 245,
+    "name": "Olive oil",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 884,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Tablespoon (14g)", "grams": 14 },
+      { "label": "Two tablespoons (28g)", "grams": 28 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["olive oil", "oil", "cooking oil"]
+  },
+  {
+    "id": 246,
+    "name": "Gravy",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 50,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Small pour (100g)", "grams": 100 },
+      { "label": "Normal pour (150g)", "grams": 150 },
+      { "label": "Generous pour (200g)", "grams": 200 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["gravy"]
+  },
+  {
+    "id": 247,
+    "name": "Honey mustard sauce",
+    "group": "Sauces / Condiments",
+    "kcalPer100g": 120,
+    "servingType": "weight",
+    "servings": [
+      { "label": "Teaspoon (5g)", "grams": 5 },
+      { "label": "Tablespoon (15g)", "grams": 15 },
+      { "label": "Custom weight", "grams": null }
+    ],
+    "aliases": ["honey mustard", "honey mustard sauce"]
+  },
+  {
+    "id": 248,
+    "name": "Chicken Tonight sauce",
+    "group": "Sauces / Condiments",
+    "kcalFixed": 180,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half jar", "kcal": 90 },
+      { "label": "Whole jar", "kcal": 180 }
+    ],
+    "aliases": ["chicken tonight", "chicken tonight sauce", "cooking sauce"]
+  },
+  {
+    "id": 249,
+    "name": "Coffee with milk",
+    "group": "Drinks",
+    "kcalFixed": 40,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 30 },
+      { "label": "Normal mug", "kcal": 40 },
+      { "label": "Large mug", "kcal": 55 }
+    ],
+    "aliases": ["coffee with milk", "coffee", "instant coffee", "white coffee"]
+  },
+  {
+    "id": 250,
+    "name": "Black coffee",
+    "group": "Drinks",
+    "kcalFixed": 5,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Espresso", "kcal": 5 },
+      { "label": "Normal mug", "kcal": 5 },
+      { "label": "Large mug", "kcal": 10 }
+    ],
+    "aliases": ["black coffee", "americano", "espresso"]
+  },
+  {
+    "id": 251,
+    "name": "Tea with milk",
+    "group": "Drinks",
+    "kcalFixed": 30,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 20 },
+      { "label": "Normal mug", "kcal": 30 },
+      { "label": "Large mug", "kcal": 45 }
+    ],
+    "aliases": ["tea", "cup of tea", "cuppa", "brew", "tea with milk"]
+  },
+  {
+    "id": 252,
+    "name": "Latte",
+    "group": "Drinks",
+    "kcalFixed": 150,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small (8oz)", "kcal": 100 },
+      { "label": "Medium (12oz)", "kcal": 150 },
+      { "label": "Large (16oz)", "kcal": 200 }
+    ],
+    "aliases": ["latte", "cafe latte"]
+  },
+  {
+    "id": 253,
+    "name": "Cappuccino",
+    "group": "Drinks",
+    "kcalFixed": 120,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small", "kcal": 80 },
+      { "label": "Normal", "kcal": 120 },
+      { "label": "Large", "kcal": 160 }
+    ],
+    "aliases": ["cappuccino"]
+  },
+  {
+    "id": 254,
+    "name": "Flat white",
+    "group": "Drinks",
+    "kcalFixed": 120,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "One flat white", "kcal": 120 }
+    ],
+    "aliases": ["flat white"]
+  },
+  {
+    "id": 255,
+    "name": "Hot chocolate",
+    "group": "Drinks",
+    "kcalFixed": 200,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small cup", "kcal": 150 },
+      { "label": "Normal mug", "kcal": 200 },
+      { "label": "Large mug", "kcal": 280 }
+    ],
+    "aliases": ["hot chocolate", "hot choc"]
+  },
+  {
+    "id": 256,
+    "name": "Orange juice",
+    "group": "Drinks",
+    "kcalFixed": 110,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small glass (150ml)", "kcal": 70 },
+      { "label": "Normal glass (200ml)", "kcal": 110 },
+      { "label": "Large glass (300ml)", "kcal": 160 }
+    ],
+    "aliases": ["orange juice", "oj", "fresh orange juice"]
+  },
+  {
+    "id": 257,
+    "name": "Apple juice",
+    "group": "Drinks",
+    "kcalFixed": 110,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small glass (150ml)", "kcal": 70 },
+      { "label": "Normal glass (200ml)", "kcal": 110 },
+      { "label": "Large glass (300ml)", "kcal": 160 }
+    ],
+    "aliases": ["apple juice"]
+  },
+  {
+    "id": 258,
+    "name": "Cola",
+    "group": "Drinks",
+    "kcalFixed": 140,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small can (330ml)", "kcal": 140 },
+      { "label": "Large can (500ml)", "kcal": 215 },
+      { "label": "Large glass (600ml)", "kcal": 250 }
+    ],
+    "aliases": ["cola", "coke", "pepsi", "fizzy drink"]
+  },
+  {
+    "id": 259,
+    "name": "Diet cola",
+    "group": "Drinks",
+    "kcalFixed": 1,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Can (330ml)", "kcal": 1 },
+      { "label": "Large can (500ml)", "kcal": 2 }
+    ],
+    "aliases": ["diet cola", "diet coke", "pepsi max", "zero sugar"]
+  },
+  {
+    "id": 260,
+    "name": "Smoothie",
+    "group": "Drinks",
+    "kcalFixed": 200,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small (250ml)", "kcal": 150 },
+      { "label": "Normal (350ml)", "kcal": 200 },
+      { "label": "Large (500ml)", "kcal": 290 }
+    ],
+    "aliases": ["smoothie", "fruit smoothie"]
+  },
+  {
+    "id": 261,
+    "name": "Wine",
+    "group": "Drinks",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small glass (125ml)", "kcal": 106 },
+      { "label": "Standard glass (175ml)", "kcal": 160 },
+      { "label": "Large glass (250ml)", "kcal": 228 }
+    ],
+    "aliases": ["wine", "glass of wine"]
+  },
+  {
+    "id": 262,
+    "name": "Red wine",
+    "group": "Drinks",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small glass (125ml)", "kcal": 106 },
+      { "label": "Standard glass (175ml)", "kcal": 160 },
+      { "label": "Large glass (250ml)", "kcal": 228 }
+    ],
+    "aliases": ["red wine"]
+  },
+  {
+    "id": 263,
+    "name": "White wine",
+    "group": "Drinks",
+    "kcalFixed": 160,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Small glass (125ml)", "kcal": 106 },
+      { "label": "Standard glass (175ml)", "kcal": 160 },
+      { "label": "Large glass (250ml)", "kcal": 228 }
+    ],
+    "aliases": ["white wine"]
+  },
+  {
+    "id": 264,
+    "name": "Beer",
+    "group": "Drinks",
+    "kcalFixed": 180,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half pint (284ml)", "kcal": 100 },
+      { "label": "Pint (568ml)", "kcal": 180 },
+      { "label": "Can (330ml)", "kcal": 140 },
+      { "label": "Can (500ml)", "kcal": 215 }
+    ],
+    "aliases": ["beer", "pint", "pint of beer", "lager", "ale"]
+  },
+  {
+    "id": 265,
+    "name": "Cider",
+    "group": "Drinks",
+    "kcalFixed": 200,
+    "servingType": "fixed",
+    "servings": [
+      { "label": "Half pint (284ml)", "kcal": 110 },
+      { "label": "Pint (568ml)", "kcal": 220 },
+      { "label": "Can (440ml)", "kcal": 170 }
+    ],
+    "aliases": ["cider", "pint of cider"]
+  }
+]

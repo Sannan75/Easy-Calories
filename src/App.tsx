@@ -6,6 +6,15 @@ import { caloriesForGrams, estimateFoodByName, FoodLookupError, lookupFoodByBarc
 import { dedupeFavourites, normaliseFoodName } from './utils/foodKey'
 import { BarcodeScanner } from './BarcodeScanner'
 import { createBarcodeLookupGuard, normaliseScannedBarcode } from './services/scanner'
+import { foodCatalogue, searchFoodCatalogue } from './services/foodCatalogueSearch'
+import { caloriesForCatalogueWeight, caloriesForFixedServing } from './services/foodCatalogueMath'
+import { validateFoodCatalogue } from './services/foodCatalogueValidation'
+import type { CatalogueServingOption, FoodCatalogueItem } from './types/foodCatalogue'
+
+if (import.meta.env.DEV) {
+  const catalogueErrors = validateFoodCatalogue(foodCatalogue)
+  if (catalogueErrors.length) console.error('Easy Calories food catalogue failed validation:', catalogueErrors)
+}
 
 type Screen = 'today' | 'favourites' | 'history' | 'settings'
 
@@ -250,6 +259,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
   const [unitCalories, setUnitCalories] = useState<number | null>(null)
   const [barcodeAmount, setBarcodeAmount] = useState<{ kcalPer100g: number; packSizeGrams: number | null } | null>(null)
   const [grams, setGrams] = useState('')
+  const [catalogueItem, setCatalogueItem] = useState<FoodCatalogueItem | null>(null)
+  const [catalogueGrams, setCatalogueGrams] = useState('')
+  const [catalogueServingLabel, setCatalogueServingLabel] = useState('')
   const [meal, setMeal] = useState(defaultMeal)
   const [saveAsFavourite, setSaveAsFavourite] = useState(false)
   const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error' | 'loading'; text: string } | null>(null)
@@ -294,11 +306,13 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     }
     return options.filter((option, index) => options.findIndex((candidate) => candidate.grams === option.grams) === index)
   }, [barcodeAmount])
+  const catalogueSuggestions = useMemo(() => catalogueItem ? [] : searchFoodCatalogue(name, { limit: 10 }), [catalogueItem, name])
 
   const estimateByName = async () => {
     if (!name.trim()) return
     setIsLookingUp(true)
     setLookupMessage(null)
+    setCatalogueItem(null)
     const estimate = await estimateFoodByName(name)
     setIsLookingUp(false)
     if (!estimate) {
@@ -350,6 +364,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     setUnitCalories(null)
     setBarcodeAmount(null)
     setGrams('')
+    setCatalogueItem(null)
+    setCatalogueGrams('')
+    setCatalogueServingLabel('')
     setLookupMessage(null)
     setIsLookingUp(false)
   }
@@ -450,6 +467,55 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     setCalories(String(caloriesForGrams(barcodeAmount.kcalPer100g, numericGrams)))
   }
 
+  const selectCatalogueItem = (item: FoodCatalogueItem) => {
+    setCatalogueItem(item)
+    setName(item.name)
+    setUnitCalories(null)
+    setQuantity(1)
+    setCustomQuantity('1')
+    setAllowFractionalQuantity(false)
+    setCustomQuantityOpen(false)
+    setBarcodeAmount(null)
+    setGrams('')
+
+    if (item.servingType === 'weight' && item.kcalPer100g) {
+      const weightedServings = item.servings.filter((serving) => typeof serving.grams === 'number' && serving.grams > 0)
+      const selected = weightedServings.find((serving) => /normal|standard/i.test(serving.label)) ?? weightedServings[0]
+      const selectedGrams = selected?.grams ?? 100
+      setCatalogueGrams(String(selectedGrams))
+      setCatalogueServingLabel(selected?.label ?? `${selectedGrams}g`)
+      setCalories(String(caloriesForCatalogueWeight(item.kcalPer100g, selectedGrams)))
+    } else {
+      const selected = item.servings.find((serving) => serving.kcal === item.kcalFixed)
+        ?? item.servings.find((serving) => /normal|standard/i.test(serving.label))
+        ?? item.servings[0]
+      const selectedCalories = caloriesForFixedServing(item, selected)
+      setCatalogueGrams('')
+      setCatalogueServingLabel(selected?.label ?? 'Normal-ish portion')
+      setCalories(selectedCalories ? String(selectedCalories) : '')
+    }
+    setLookupMessage({ tone: 'success', text: 'Selected from the notebook’s suspiciously organised food list.' })
+  }
+
+  const chooseCatalogueGrams = (value: number | string, label?: string) => {
+    const nextValue = typeof value === 'number' ? String(value) : value
+    setCatalogueGrams(nextValue)
+    if (label) setCatalogueServingLabel(label)
+    const numericGrams = Number(nextValue)
+    if (!catalogueItem?.kcalPer100g || !(numericGrams > 0)) {
+      setCalories('')
+      return
+    }
+    setCalories(String(caloriesForCatalogueWeight(catalogueItem.kcalPer100g, numericGrams)))
+  }
+
+  const chooseCatalogueServing = (serving: CatalogueServingOption) => {
+    if (!catalogueItem) return
+    setCatalogueServingLabel(serving.label)
+    const selectedCalories = caloriesForFixedServing(catalogueItem, serving)
+    setCalories(selectedCalories ? String(selectedCalories) : '')
+  }
+
   return <div className="modal-backdrop" style={backdropStyle} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
     <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="add-title">
       <div className="sheet-handle" />
@@ -474,8 +540,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
         onSubmit(submittedName, Math.round(kcal), meal, saveAsFavourite)
       }}>
         {mode === 'name' ? <>
-          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setCustomQuantity('1'); setAllowFractionalQuantity(false); setCustomQuantityOpen(false); setUnitCalories(null); setBarcodeAmount(null); setGrams('') }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
-          <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
+          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); if (catalogueItem) return; setLookupMessage(null); setCalories(''); setQuantity(1); setCustomQuantity('1'); setAllowFractionalQuantity(false); setCustomQuantityOpen(false); setUnitCalories(null); setBarcodeAmount(null); setGrams(''); setCatalogueGrams(''); setCatalogueServingLabel('') }} placeholder="e.g. chick, cornflakes, or heroic toast" maxLength={80} required /></label>
+          {catalogueSuggestions.length > 0 && <section className="catalogue-suggestions" aria-label="Possible culprits"><div><strong>Possible culprits</strong><small>Pick one, or keep typing like a rebel.</small></div><div className="catalogue-results">{catalogueSuggestions.map((item) => <button type="button" key={item.id} onClick={() => selectCatalogueItem(item)}><span><strong>{item.name}</strong><small>{item.group}</small></span><span>{item.servingType === 'weight' ? `${item.kcalPer100g} kcal per 100g` : `roughly ${item.kcalFixed ?? item.servings[0]?.kcal} kcal`}</span></button>)}</div></section>}
+          {catalogueItem ? <button className="text-button catalogue-change" type="button" onClick={() => { setCatalogueItem(null); setCatalogueGrams(''); setCatalogueServingLabel(''); setCalories(''); setLookupMessage(null) }}>Choose a different culprit</button> : <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>}
         </> : <>
           {scannerOpen && <BarcodeScanner onCancel={() => setScannerOpen(false)} onDetected={(scannedBarcode) => {
             setScannerOpen(false)
@@ -494,6 +561,15 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
           {evidenceBarcode && <p className="barcode-evidence">Looked up from barcode {evidenceBarcode}</p>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
+        {mode === 'name' && catalogueItem && <section className="amount-picker catalogue-amount" aria-label="Catalogue food amount">
+          <div><strong>{catalogueItem.servingType === 'weight' ? 'How many grams joined the incident?' : 'Which portion made an appearance?'}</strong><small>{catalogueItem.servingType === 'weight' ? `${catalogueItem.kcalPer100g} kcal per 100g` : catalogueItem.group}</small></div>
+          <div className="amount-options">{catalogueItem.servings.filter((serving) => catalogueItem.servingType === 'fixed' || typeof serving.grams === 'number').map((serving) => <button type="button" key={serving.label} className={catalogueItem.servingType === 'weight' ? Number(catalogueGrams) === serving.grams ? 'active' : '' : catalogueServingLabel === serving.label ? 'active' : ''} onClick={() => catalogueItem.servingType === 'weight' ? chooseCatalogueGrams(serving.grams!, serving.label) : chooseCatalogueServing(serving)}>{serving.label}</button>)}</div>
+          {catalogueItem.servingType === 'weight' && <label>Grams, if we’re being grown-up about it.<small>Snack maths will handle the multiplication.</small><div className="unit-input"><input aria-label="Catalogue grams" type="number" inputMode="decimal" min="0.1" max="10000" step="0.1" value={catalogueGrams} onFocus={keepFocusedControlVisible} onChange={(e) => chooseCatalogueGrams(e.target.value, 'Custom weight')} /><span>g</span></div></label>}
+          {catalogueItem.servingType === 'weight' && catalogueItem.kcalPer100g && Number(catalogueGrams) > 0
+            ? <p>{catalogueItem.kcalPer100g.toLocaleString()} per 100g × {formatGrams(Number(catalogueGrams))}g = roughly {caloriesForCatalogueWeight(catalogueItem.kcalPer100g, Number(catalogueGrams)).toLocaleString()} kcals</p>
+            : catalogueItem.servingType === 'fixed' && calories && <p>{catalogueServingLabel}: roughly {Number(calories).toLocaleString()} kcals. The notebook accepts this portion.</p>}
+          {catalogueItem.note && <p>{catalogueItem.note}</p>}
+        </section>}
         {barcodeAmount && <section className="amount-picker" aria-label="Packaged food amount">
           <div><strong>How much made an appearance?</strong><small>{Math.round(barcodeAmount.kcalPer100g).toLocaleString()} kcals per 100g</small></div>
           <div className="amount-options">{gramOptions.map((option) => <button type="button" key={option.label} className={Number(grams) === option.grams ? 'active' : ''} onClick={() => chooseGrams(option.grams)}>{option.label}</button>)}</div>
