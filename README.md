@@ -2,7 +2,7 @@
 
 A mobile-first, judgement-free and deliberately approximate calorie notebook. Logs and favourites stay in the browser's `localStorage`; there is no account or backend.
 
-Food-name estimates use a small offline dictionary. Optional manual barcode lookup requests product data from Open Food Facts, while keeping notebook data on the device.
+Food-name estimates use a small offline dictionary. Barcode lookup can use the phone camera or manual entry, then requests product data from Open Food Facts while keeping notebook data on the device. The camera is used only while the scanner view is open and its stream is stopped after a scan, cancellation, tab switch, or sheet close.
 
 The local estimate engine prefers exact and longer phrases, understands common aliases and cautious typo matches, and can add together familiar foods in phrases such as `toast with cheese`.
 Leading quantities such as `two ham sandwiches` or `2 ham sandwiches` are recognised, and estimated foods include a 1–4 quantity picker with per-item and total calories.
@@ -25,6 +25,7 @@ Open the local URL printed by Vite. Other useful commands:
 ```bash
 npm run build
 npm run preview
+npm test
 ```
 
 The production files are written to `dist/`.
@@ -53,8 +54,10 @@ Logs and favourites are stored only in `localStorage` under `easy-calories-data-
 
 ```text
 src/
-  App.tsx       Screens and app behaviour
-  storage.ts    localStorage persistence and import validation
-  types.ts      Food and log data types
-  styles.css    Mobile-first visual system
+  App.tsx             Screens and app behaviour
+  BarcodeScanner.tsx  Camera scanner and cleanup lifecycle
+  services/           Food lookup and scanner helpers
+  storage.ts          localStorage persistence and import validation
+  types.ts            Food and log data types
+  styles.css          Mobile-first visual system
 ```

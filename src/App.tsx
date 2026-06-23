@@ -4,6 +4,7 @@ import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection, RecentF
 import { emptyData, loadData, normaliseData, saveData } from './storage'
 import { estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
 import { dedupeFavourites, normaliseFoodName } from './utils/foodKey'
+import { BarcodeScanner } from './BarcodeScanner'
 
 type Screen = 'today' | 'favourites' | 'history' | 'settings'
 
@@ -137,7 +138,7 @@ function App() {
         }} onDismissPromotion={() => setPendingPromotion(null)} onRecentAdd={(food) => {
           addEntry(food.name, food.calories, food.meal)
           setToast('The notebook remembers. Slightly worrying, but useful.')
-        }} onAdd={addEntry} favourites={data.favourites} onDelete={removeEntry} onToggleFavourite={toggleFavourite} onClear={() => {
+        }} onAdd={addEntry} onToast={setToast} favourites={data.favourites} onDelete={removeEntry} onToggleFavourite={toggleFavourite} onClear={() => {
           if (window.confirm('Clear today’s evidence? The crumbs will retain legal counsel.')) {
             const date = todayKey()
             setData((current) => ({ ...current, days: { ...current.days, [date]: { date, entries: [] } } }))
@@ -174,7 +175,7 @@ function App() {
   )
 }
 
-function TodayScreen({ day, recentFoods, favourites, promotion, onPromote, onDismissPromotion, onRecentAdd, onAdd, onDelete, onToggleFavourite, onClear }: {
+function TodayScreen({ day, recentFoods, favourites, promotion, onPromote, onDismissPromotion, onRecentAdd, onAdd, onToast, onDelete, onToggleFavourite, onClear }: {
   day?: DayLog
   recentFoods: RecentFood[]
   favourites: FavouriteFood[]
@@ -183,6 +184,7 @@ function TodayScreen({ day, recentFoods, favourites, promotion, onPromote, onDis
   onDismissPromotion: () => void
   onRecentAdd: (food: RecentFood) => void
   onAdd: (name: string, calories: number, meal: MealSection, saveAsFavourite?: boolean) => void
+  onToast: (message: string) => void
   onDelete: (id: string) => void
   onToggleFavourite: (name: string, calories: number, meal: MealSection) => void
   onClear: () => void
@@ -229,11 +231,11 @@ function TodayScreen({ day, recentFoods, favourites, promotion, onPromote, onDis
       })}
     </div>
     <button className="fab" onClick={() => setFormOpen(true)}><span>+</span> Add something edible-ish</button>
-    {formOpen && <FoodForm defaultMeal={defaultMeal} onClose={() => setFormOpen(false)} onSubmit={(...args) => { onAdd(...args); setFormOpen(false) }} />}
+    {formOpen && <FoodForm defaultMeal={defaultMeal} onClose={() => setFormOpen(false)} onToast={onToast} onSubmit={(...args) => { onAdd(...args); setFormOpen(false) }} />}
   </div>
 }
 
-function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection; onClose: () => void; onSubmit: (name: string, calories: number, meal: MealSection, saveAsFavourite: boolean) => void }) {
+function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: MealSection; onClose: () => void; onToast: (message: string) => void; onSubmit: (name: string, calories: number, meal: MealSection, saveAsFavourite: boolean) => void }) {
   const [mode, setMode] = useState<'name' | 'barcode'>('name')
   const [name, setName] = useState('')
   const [barcode, setBarcode] = useState('')
@@ -244,6 +246,7 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
   const [saveAsFavourite, setSaveAsFavourite] = useState(false)
   const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
   const [isLookingUp, setIsLookingUp] = useState(false)
+  const [scannerOpen, setScannerOpen] = useState(false)
   const [visualViewport, setVisualViewport] = useState({ height: 0, offsetTop: 0 })
   const nameRef = useRef<HTMLInputElement>(null)
   useEffect(() => nameRef.current?.focus(), [])
@@ -290,14 +293,14 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
     setLookupMessage({ tone: 'success', text: `${estimateCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
   }
 
-  const estimateByBarcode = async () => {
-    if (!barcode.trim()) return
+  const estimateByBarcode = async (barcodeValue = barcode) => {
+    if (!barcodeValue.trim()) return
     setIsLookingUp(true)
     setLookupMessage(null)
     try {
-      const estimate = await lookupFoodByBarcode(barcode)
+      const estimate = await lookupFoodByBarcode(barcodeValue)
       if (!estimate) {
-        setLookupMessage({ tone: 'error', text: 'No barcode luck. The tin remains mysterious.' })
+        setLookupMessage({ tone: 'error', text: 'Barcode caught, product unknown. The tin remains mysterious.' })
         return
       }
       setName(estimate.name)
@@ -308,7 +311,7 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
       setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${brand}${estimate.note ? ` ${estimate.note}` : ''}` })
     } catch (error) {
       const text = error instanceof FoodLookupError && error.code === 'missing-calories'
-        ? 'Found the food. The calories, however, have left no forwarding address.'
+        ? 'Found the product. The calories have left no forwarding address.'
         : 'The snack wires appear to be down. Manual guesswork remains undefeated.'
       setLookupMessage({ tone: 'error', text })
     } finally {
@@ -335,16 +338,27 @@ function FoodForm({ defaultMeal, onClose, onSubmit }: { defaultMeal: MealSection
       <div className="sheet-handle" />
       <div className="sheet-heading"><div><span className="eyebrow">No laboratory required</span><h2 id="add-title">Add a food-ish thing</h2></div><button className="close-button" onClick={onClose} aria-label="Close">×</button></div>
       <div className="lookup-tabs" role="tablist" aria-label="Food lookup method">
-        <button type="button" role="tab" aria-selected={mode === 'name'} className={mode === 'name' ? 'active' : ''} onClick={() => { setMode('name'); setLookupMessage(null) }}>By name</button>
-        <button type="button" role="tab" aria-selected={mode === 'barcode'} className={mode === 'barcode' ? 'active' : ''} onClick={() => { setMode('barcode'); setLookupMessage(null) }}>By barcode</button>
+        <button type="button" role="tab" aria-selected={mode === 'name'} className={mode === 'name' ? 'active' : ''} onClick={() => { setScannerOpen(false); setMode('name'); setLookupMessage(null) }}>By name</button>
+        <button type="button" role="tab" aria-selected={mode === 'barcode'} className={mode === 'barcode' ? 'active' : ''} onClick={() => { setScannerOpen(false); setMode('barcode'); setLookupMessage(null) }}>By barcode</button>
       </div>
       <form onSubmit={(e) => { e.preventDefault(); const kcal = Number(calories); if (name.trim() && kcal > 0) onSubmit(name, Math.round(kcal), meal, saveAsFavourite) }}>
         {mode === 'name' ? <>
           <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null) }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
           <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
         </> : <>
+          {scannerOpen && <BarcodeScanner onCancel={() => setScannerOpen(false)} onDetected={(scannedBarcode) => {
+            setScannerOpen(false)
+            setBarcode(scannedBarcode)
+            onToast([
+              'Barcode caught. It put up a brave fight.',
+              'Found it. The packet has confessed.',
+              'Scanned. The evidence is admissible-ish.',
+            ][Math.floor(Math.random() * 3)])
+            void estimateByBarcode(scannedBarcode)
+          }} />}
           <label>Barcode number<input value={barcode} onFocus={keepFocusedControlVisible} onChange={(e) => { setBarcode(e.target.value.replace(/[^0-9 ]/g, '')); setLookupMessage(null) }} placeholder="Type or paste the tiny number" inputMode="numeric" maxLength={18} /></label>
-          <button className="estimate-button" type="button" disabled={!barcode.trim() || isLookingUp} onClick={estimateByBarcode}>{isLookingUp ? 'Rummaging in the tins…' : 'Ask the snack oracle'}</button>
+          {!scannerOpen && <button className="scan-button" type="button" onClick={() => { setLookupMessage(null); setScannerOpen(true) }}><span aria-hidden="true">▣</span> Scan the evidence</button>}
+          <button className="estimate-button" type="button" disabled={!barcode.trim() || isLookingUp} onClick={() => void estimateByBarcode()}>{isLookingUp ? 'Rummaging in the tins…' : 'Ask the snack oracle'}</button>
           {name && <label>What shall we call it?<input value={name} onFocus={keepFocusedControlVisible} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
@@ -387,6 +401,10 @@ function HistoryScreen({ days, selectedDate, onSelect, onUseAgain }: { days: Rec
 
 function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImport: (d: AppData) => void; onClearAll: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const loggedDays = Object.values(data.days).filter((day) => day.entries.length).length
+  const usualSuspects = dedupeFavourites(data.favourites).length
+  const quickReturners = data.recentFoods.length
+  const builtAt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(__BUILD_TIME__))
   const exportData = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -405,7 +423,8 @@ function SettingsScreen({ data, onImport, onClearAll }: { data: AppData; onImpor
     <section className="settings-card"><div className="settings-icon">↥</div><div><h3>Manual backup</h3><p>Keep your food lore somewhere safe. The file is yours; nothing leaves this device by itself.</p></div><div className="button-pair"><button className="secondary-button" onClick={exportData}>Export JSON</button><button className="secondary-button" onClick={() => inputRef.current?.click()}>Import JSON</button><input className="visually-hidden" ref={inputRef} type="file" accept="application/json,.json" onChange={(e) => importData(e.target.files?.[0])} /></div></section>
     <section className="settings-card"><div className="settings-icon">⌁</div><div><h3>Stored on this device</h3><p>No account, no cloud, no mysterious wellness empire. Your notebook stays in localStorage; only barcodes you choose to look up are sent to Open Food Facts.</p></div></section>
     <button className="danger-button" onClick={onClearAll}>Erase all notebook data</button>
-    <p className="tiny-note">Easy Calories v0.5.2 · rough arithmetic, not health advice. The vibes are free.</p>
+    <section className="app-paperwork" aria-label="App version and notebook counts"><h3>App paperwork</h3><p>Easy Calories v{__APP_VERSION__}</p><p>Built: {builtAt}</p><p>Notebook contents: {loggedDays} {loggedDays === 1 ? 'day' : 'days'}, {usualSuspects} usual {usualSuspects === 1 ? 'suspect' : 'suspects'}, {quickReturners} quick {quickReturners === 1 ? 'returner' : 'returners'}.</p></section>
+    <p className="tiny-note">Rough arithmetic, not health advice. The vibes are free.</p>
   </div>
 }
 
