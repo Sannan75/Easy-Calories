@@ -4,6 +4,27 @@ export const cameraIsSupported = (mediaDevices: CameraSupport) => typeof mediaDe
 
 export const normaliseScannedBarcode = (value: string) => value.replace(/\D/g, '')
 
+export type BarcodeLookupTicket = { id: number; barcode: string }
+
+export function createBarcodeLookupGuard() {
+  let generation = 0
+  let currentBarcode = ''
+
+  return {
+    updateBarcode(value: string) {
+      currentBarcode = normaliseScannedBarcode(value)
+      generation += 1
+    },
+    begin(value: string): BarcodeLookupTicket {
+      currentBarcode = normaliseScannedBarcode(value)
+      return { id: ++generation, barcode: currentBarcode }
+    },
+    isCurrent(ticket: BarcodeLookupTicket) {
+      return ticket.id === generation && ticket.barcode === currentBarcode
+    },
+  }
+}
+
 export function cameraErrorMessage(error: unknown) {
   const name = error instanceof DOMException
     ? error.name

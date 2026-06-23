@@ -44,6 +44,7 @@ export function BarcodeScanner({ onDetected, onCancel }: { onDetected: (barcode:
             if (!active || !result || detectedRef.current) return
             const barcode = normaliseScannedBarcode(result.getText())
             if (!barcode) return
+            if (import.meta.env.DEV) console.debug('[Easy Calories] detected barcode', barcode)
             detectedRef.current = true
             callbackControls.stop()
             stopVideoTracks(video)

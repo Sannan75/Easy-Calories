@@ -5,6 +5,7 @@ import { emptyData, loadData, normaliseData, saveData } from './storage'
 import { estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
 import { dedupeFavourites, normaliseFoodName } from './utils/foodKey'
 import { BarcodeScanner } from './BarcodeScanner'
+import { createBarcodeLookupGuard, normaliseScannedBarcode } from './services/scanner'
 
 type Screen = 'today' | 'favourites' | 'history' | 'settings'
 
@@ -244,11 +245,16 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
   const [unitCalories, setUnitCalories] = useState<number | null>(null)
   const [meal, setMeal] = useState(defaultMeal)
   const [saveAsFavourite, setSaveAsFavourite] = useState(false)
-  const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
+  const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error' | 'loading'; text: string } | null>(null)
   const [isLookingUp, setIsLookingUp] = useState(false)
   const [scannerOpen, setScannerOpen] = useState(false)
+  const [evidenceBarcode, setEvidenceBarcode] = useState('')
   const [visualViewport, setVisualViewport] = useState({ height: 0, offsetTop: 0 })
   const nameRef = useRef<HTMLInputElement>(null)
+  const displayNameRef = useRef<HTMLInputElement>(null)
+  const barcodeGuard = useMemo(() => createBarcodeLookupGuard(), [])
+  const appliedBarcodeRef = useRef('')
+  const nameEditVersionRef = useRef(0)
   useEffect(() => nameRef.current?.focus(), [])
 
   useEffect(() => {
@@ -293,29 +299,62 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     setLookupMessage({ tone: 'success', text: `${estimateCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
   }
 
-  const estimateByBarcode = async (barcodeValue = barcode) => {
-    if (!barcodeValue.trim()) return
-    setIsLookingUp(true)
+  const updateBarcode = (nextBarcode: string, forceClear = false) => {
+    const cleanBarcode = normaliseScannedBarcode(nextBarcode)
+    const stillShowingSameProduct = !forceClear && cleanBarcode !== '' && cleanBarcode === appliedBarcodeRef.current
+    barcodeGuard.updateBarcode(cleanBarcode)
+    setBarcode(nextBarcode)
+    if (stillShowingSameProduct) return
+
+    appliedBarcodeRef.current = ''
+    nameEditVersionRef.current += 1
+    setEvidenceBarcode('')
+    setName('')
+    setCalories('')
+    setQuantity(1)
+    setUnitCalories(null)
     setLookupMessage(null)
+    setIsLookingUp(false)
+  }
+
+  const estimateByBarcode = async (barcodeValue = barcode) => {
+    const cleanBarcode = normaliseScannedBarcode(barcodeValue)
+    if (!cleanBarcode) return
+    const ticket = barcodeGuard.begin(cleanBarcode)
+    const nameEditVersionAtStart = nameEditVersionRef.current
+    appliedBarcodeRef.current = ''
+    setEvidenceBarcode(cleanBarcode)
+    setIsLookingUp(true)
+    setLookupMessage({ tone: 'loading', text: `Interrogating barcode ${cleanBarcode}...` })
+    if (import.meta.env.DEV) console.debug('[Easy Calories] barcode sent to lookup', cleanBarcode)
     try {
-      const estimate = await lookupFoodByBarcode(barcodeValue)
+      const estimate = await lookupFoodByBarcode(cleanBarcode)
+      if (!barcodeGuard.isCurrent(ticket)) {
+        if (import.meta.env.DEV) console.debug('[Easy Calories] stale barcode response discarded', cleanBarcode)
+        return
+      }
       if (!estimate) {
         setLookupMessage({ tone: 'error', text: 'Barcode caught, product unknown. The tin remains mysterious.' })
         return
       }
-      setName(estimate.name)
+      if (nameEditVersionRef.current === nameEditVersionAtStart) setName(estimate.name)
       setQuantity(1)
       setUnitCalories(estimate.unitCalories ?? estimate.calories)
       setCalories(String(estimate.calories))
-      const brand = estimate.brand ? ` ${estimate.brand} has entered the notebook.` : ''
-      setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${brand}${estimate.note ? ` ${estimate.note}` : ''}` })
+      appliedBarcodeRef.current = cleanBarcode
+      setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${estimate.note ? ` ${estimate.note}` : ''}` })
+      if (import.meta.env.DEV) console.debug('[Easy Calories] barcode result applied', { barcode: cleanBarcode, productName: estimate.productName ?? estimate.name })
     } catch (error) {
+      if (!barcodeGuard.isCurrent(ticket)) {
+        if (import.meta.env.DEV) console.debug('[Easy Calories] stale barcode error discarded', cleanBarcode)
+        return
+      }
       const text = error instanceof FoodLookupError && error.code === 'missing-calories'
         ? 'Found the product. The calories have left no forwarding address.'
         : 'The snack wires appear to be down. Manual guesswork remains undefeated.'
       setLookupMessage({ tone: 'error', text })
     } finally {
-      setIsLookingUp(false)
+      if (barcodeGuard.isCurrent(ticket)) setIsLookingUp(false)
     }
   }
 
@@ -338,17 +377,31 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
       <div className="sheet-handle" />
       <div className="sheet-heading"><div><span className="eyebrow">No laboratory required</span><h2 id="add-title">Add a food-ish thing</h2></div><button className="close-button" onClick={onClose} aria-label="Close">×</button></div>
       <div className="lookup-tabs" role="tablist" aria-label="Food lookup method">
-        <button type="button" role="tab" aria-selected={mode === 'name'} className={mode === 'name' ? 'active' : ''} onClick={() => { setScannerOpen(false); setMode('name'); setLookupMessage(null) }}>By name</button>
+        <button type="button" role="tab" aria-selected={mode === 'name'} className={mode === 'name' ? 'active' : ''} onClick={() => { setScannerOpen(false); barcodeGuard.updateBarcode(barcode); setIsLookingUp(false); setMode('name'); setLookupMessage(null) }}>By name</button>
         <button type="button" role="tab" aria-selected={mode === 'barcode'} className={mode === 'barcode' ? 'active' : ''} onClick={() => { setScannerOpen(false); setMode('barcode'); setLookupMessage(null) }}>By barcode</button>
       </div>
-      <form onSubmit={(e) => { e.preventDefault(); const kcal = Number(calories); if (name.trim() && kcal > 0) onSubmit(name, Math.round(kcal), meal, saveAsFavourite) }}>
+      <form noValidate onSubmit={(e) => {
+        e.preventDefault()
+        if (isLookingUp) return
+        const submittedName = mode === 'barcode' ? displayNameRef.current?.value ?? name : name
+        if (!submittedName.trim()) {
+          setLookupMessage({ tone: 'error', text: 'The evidence needs a name. Even snacks need paperwork.' })
+          return
+        }
+        const kcal = Number(calories)
+        if (!(kcal > 0)) {
+          setLookupMessage({ tone: 'error', text: 'The calorie box needs a heroic-ish number before we file this.' })
+          return
+        }
+        onSubmit(submittedName, Math.round(kcal), meal, saveAsFavourite)
+      }}>
         {mode === 'name' ? <>
           <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null) }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
           <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
         </> : <>
           {scannerOpen && <BarcodeScanner onCancel={() => setScannerOpen(false)} onDetected={(scannedBarcode) => {
             setScannerOpen(false)
-            setBarcode(scannedBarcode)
+            updateBarcode(scannedBarcode, true)
             onToast([
               'Barcode caught. It put up a brave fight.',
               'Found it. The packet has confessed.',
@@ -356,17 +409,18 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
             ][Math.floor(Math.random() * 3)])
             void estimateByBarcode(scannedBarcode)
           }} />}
-          <label>Barcode number<input value={barcode} onFocus={keepFocusedControlVisible} onChange={(e) => { setBarcode(e.target.value.replace(/[^0-9 ]/g, '')); setLookupMessage(null) }} placeholder="Type or paste the tiny number" inputMode="numeric" maxLength={18} /></label>
+          <label>Barcode number<input value={barcode} onFocus={keepFocusedControlVisible} onChange={(e) => updateBarcode(e.target.value.replace(/[^0-9 ]/g, ''))} placeholder="Type or paste the tiny number" inputMode="numeric" maxLength={18} /></label>
           {!scannerOpen && <button className="scan-button" type="button" onClick={() => { setLookupMessage(null); setScannerOpen(true) }}><span aria-hidden="true">▣</span> Scan the evidence</button>}
           <button className="estimate-button" type="button" disabled={!barcode.trim() || isLookingUp} onClick={() => void estimateByBarcode()}>{isLookingUp ? 'Rummaging in the tins…' : 'Ask the snack oracle'}</button>
-          {name && <label>What shall we call it?<input value={name} onFocus={keepFocusedControlVisible} onChange={(e) => setName(e.target.value)} maxLength={80} required /></label>}
+          {(barcode.trim() || evidenceBarcode || name) && <label>What shall we call it?<input ref={displayNameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { nameEditVersionRef.current += 1; setName(e.target.value) }} maxLength={80} /></label>}
+          {evidenceBarcode && <p className="barcode-evidence">Looked up from barcode {evidenceBarcode}</p>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
         {unitCalories && <div className="quantity-picker"><div><strong>How many made an appearance?</strong><small>{Math.round(unitCalories).toLocaleString()} each × {quantity} = roughly {Math.round(unitCalories * quantity).toLocaleString()} kcals</small></div><div className="quantity-options" aria-label="Item quantity">{[1, 2, 3, 4].map((number) => <button type="button" key={number} className={quantity === number ? 'active' : ''} aria-pressed={quantity === number} onClick={() => chooseQuantity(number)}>{number}</button>)}</div></div>}
         <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => { const value = e.target.value; setCalories(value); if (unitCalories && Number(value) > 0) setUnitCalories(Number(value) / quantity) }} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
         <label>Where did it happen?<select value={meal} onFocus={keepFocusedControlVisible} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>
         <label className="usual-toggle"><input type="checkbox" checked={saveAsFavourite} onChange={(e) => setSaveAsFavourite(e.target.checked)} /><span><strong>Save as a usual suspect</strong><small>Handy for foods making repeat appearances.</small></span></label>
-        <button className="primary-button" type="submit">Log the evidence</button>
+        <button className="primary-button" type="submit" disabled={isLookingUp}>Log the evidence</button>
       </form>
     </section>
   </div>

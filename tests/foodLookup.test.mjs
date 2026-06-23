@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { estimateFoodByName } from '../src/services/foodLookup.ts'
+import { barcodeProductDisplayName, estimateFoodByName } from '../src/services/foodLookup.ts'
 
 const cases = [
   ['cheese on toast', 350, 1],
@@ -71,4 +71,11 @@ test('product names and trailing measurements are not treated as quantities', as
   const fiveAlive = await estimateFoodByName('5 alive juice')
   assert.equal(fiveAlive?.quantity, 1)
   assert.equal(fiveAlive?.calories, 110)
+})
+
+test('barcode product identity uses stable priority with barcode as last resort', () => {
+  assert.equal(barcodeProductDisplayName({ product_name: 'Fish Pie', generic_name: 'Pie', brands: 'Seaside' }, '12345678'), 'Fish Pie')
+  assert.equal(barcodeProductDisplayName({ generic_name: 'Fish Pie', brands: 'Seaside' }, '12345678'), 'Fish Pie')
+  assert.equal(barcodeProductDisplayName({ brands: 'Seaside' }, '12345678'), 'Seaside')
+  assert.equal(barcodeProductDisplayName({}, '12345678'), '12345678')
 })

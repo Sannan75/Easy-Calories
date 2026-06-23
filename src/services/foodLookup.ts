@@ -1,6 +1,8 @@
 export interface FoodEstimate {
   name: string
   brand?: string
+  barcode?: string
+  productName?: string
   calories: number
   quantity?: number
   unitCalories?: number
@@ -270,6 +272,13 @@ type OpenFoodFactsResponse = {
   product?: OpenFoodFactsProduct
 }
 
+export function barcodeProductDisplayName(product: Pick<OpenFoodFactsProduct, 'product_name' | 'generic_name' | 'brands'>, barcode: string) {
+  return product.product_name?.trim()
+    || product.generic_name?.trim()
+    || product.brands?.trim()
+    || barcode
+}
+
 const asPositiveNumber = (value: unknown): number | null => {
   const number = typeof value === 'string' ? Number.parseFloat(value) : Number(value)
   return Number.isFinite(number) && number > 0 ? number : null
@@ -297,12 +306,15 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
     const perServing = asPositiveNumber(nutriments['energy-kcal_serving'])
     const per100g = asPositiveNumber(nutriments['energy-kcal_100g']) ?? asPositiveNumber(nutriments['energy-kcal'])
     const servingQuantity = asPositiveNumber(product.serving_quantity)
-    const name = product.product_name?.trim() || product.generic_name?.trim() || 'Mysterious packaged food'
+    const productName = product.product_name?.trim() || undefined
+    const name = barcodeProductDisplayName(product, cleanBarcode)
 
     if (perServing) {
       return {
         name,
         brand: product.brands?.trim() || undefined,
+        barcode: cleanBarcode,
+        productName,
         calories: Math.round(perServing),
         quantity: 1,
         unitCalories: Math.round(perServing),
@@ -315,6 +327,8 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
       return {
         name,
         brand: product.brands?.trim() || undefined,
+        barcode: cleanBarcode,
+        productName,
         calories: Math.round(per100g * servingQuantity / 100),
         quantity: 1,
         unitCalories: Math.round(per100g * servingQuantity / 100),
@@ -327,6 +341,8 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
       return {
         name,
         brand: product.brands?.trim() || undefined,
+        barcode: cleanBarcode,
+        productName,
         calories: Math.round(per100g),
         quantity: 1,
         unitCalories: Math.round(per100g),
