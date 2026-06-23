@@ -305,6 +305,16 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
       setLookupMessage({ tone: 'error', text: 'The snack oracle has not heard of this one. Which is rude.' })
       return
     }
+    if (estimate.blocked) {
+      setCalories('')
+      setQuantity(estimate.quantity ?? 1)
+      setCustomQuantity(String(estimate.quantity ?? 1))
+      setAllowFractionalQuantity(false)
+      setCustomQuantityOpen(false)
+      setUnitCalories(null)
+      setLookupMessage({ tone: 'error', text: estimate.note ?? 'I found part of that, but not enough to call it a meal. Snack court requires more evidence.' })
+      return
+    }
     const estimatedQuantity = estimate.quantity ?? 1
     const each = estimate.unitCalories ?? Math.round(estimate.calories / estimatedQuantity)
     setQuantity(estimatedQuantity)

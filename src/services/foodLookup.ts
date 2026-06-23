@@ -13,6 +13,7 @@ export interface FoodEstimate {
   source: 'local' | 'open-food-facts' | 'combo' | 'alias' | 'partial' | 'manual'
   note?: string
   matchedTerms?: string[]
+  blocked?: boolean
 }
 
 export type FoodLookupErrorCode = 'network' | 'missing-calories'
@@ -38,6 +39,15 @@ const LOCAL_FOOD_GROUPS: Record<string, Record<string, number>> = {
     croissant: 230, pancake: 175, pancakes: 350, crepe: 160, crepes: 320, waffle: 220,
     toast: 90, 'bread slice': 90, 'slice of bread': 90, butter: 50, jam: 70,
     'buttered toast': 150, 'jam toast': 160, 'peanut butter toast': 250,
+    'full english': 900, 'full english breakfast': 900, 'english breakfast': 900, 'fry up': 900,
+    'bacon and eggs': 350, 'bacon eggs': 350, 'eggs and bacon': 350,
+    'scrambled eggs on toast': 350, 'poached eggs on toast': 300, 'fried eggs on toast': 350,
+    'sausage sandwich': 500, 'bacon sandwich': 450, 'bacon roll': 450, 'sausage roll': 320,
+  },
+  cereal: {
+    cornflakes: 150, 'cornflakes with milk': 220, 'cereal with milk': 220,
+    weetabix: 150, 'weetabix with milk': 220, 'granola with yoghurt': 350,
+    'granola with yogurt': 350,
   },
   meals: {
     sandwich: 400, 'chicken sandwich': 450, 'cheese sandwich': 400, 'ham sandwich': 380,
@@ -50,6 +60,16 @@ const LOCAL_FOOD_GROUPS: Record<string, Record<string, number>> = {
     'avocado toast': 300, 'chicken and rice': 550, 'chicken rice': 550,
     'pasta with sauce': 600, 'pasta and sauce': 600, 'crepe with nutella': 260,
     'pancake with syrup': 300, 'yoghurt with berries': 220, 'ready meal': 600,
+    'fish pie': 500, 'cottage pie': 550, 'shepherds pie': 550, lasagne: 650,
+    'macaroni cheese': 600, 'chicken korma': 700, 'chicken madras': 700,
+    'chicken tikka masala': 750, 'chicken curry': 700, 'curry and rice': 800,
+    'chilli con carne': 650, 'spaghetti bolognese': 650, bolognese: 650,
+    'stir fry': 550, 'chicken stir fry': 600, 'roast dinner': 800,
+    'chicken dinner': 700, 'pie and mash': 800, 'fish and chips': 900,
+  },
+  convenience: {
+    'chicken tonight': 180, 'honey and mustard chicken tonight': 180,
+    'chicken tonight sauce': 180, 'honey mustard sauce': 120,
   },
   snacks: {
     crisps: 180, 'chocolate bar': 230, chocolate: 230, biscuit: 70, biscuits: 140,
@@ -75,6 +95,7 @@ const FOOD_ALIASES: Record<string, string> = {
   brew: 'tea with milk',
   'red wine': 'wine',
   'toast with jam': 'jam toast',
+  '5 alive juice': 'juice',
 }
 
 const CANONICAL_FOOD_ALIASES: Record<string, string> = {
@@ -116,6 +137,8 @@ const COMBO_PHRASES = new Set([
   'ham and cheese sandwich', 'beans on toast', 'egg on toast', 'chicken and rice',
   'pasta with sauce', 'pasta and sauce', 'crepe with nutella', 'pancake with syrup',
   'yoghurt with berries', 'coffee with oat milk', 'coffee with milk', 'tea with milk',
+  'bacon and eggs', 'eggs and bacon', 'cornflakes with milk', 'cereal with milk',
+  'weetabix with milk', 'granola with yoghurt', 'granola with yogurt',
 ])
 
 const PORTION_NOTES: Record<string, string> = {
@@ -126,6 +149,10 @@ const PORTION_NOTES: Record<string, string> = {
   grapes: 'Assuming a small bunch.',
   pasta: 'Assuming a normal plate, not a theatrical mountain.',
   wine: 'Assuming a normal glass. Optimistic, perhaps.',
+  'chicken tonight': 'I’m treating this as the sauce/product, not the whole dinner. Add chicken separately if it joined the incident.',
+  'honey and mustard chicken tonight': 'I’m treating this as Chicken Tonight sauce, not the whole dinner. The chicken is legally separate.',
+  'chicken tonight sauce': 'I’m treating this as the sauce/product, not the whole dinner. Add chicken separately if it joined the incident.',
+  'honey mustard sauce': 'I’m treating this as the sauce/product, not the whole dinner. Add chicken separately if it joined the incident.',
 }
 
 const normalise = (value: string) => value
@@ -182,9 +209,18 @@ function createLocalEstimate(query: string, key: string, quantity: number, sourc
   }
 }
 
+function createBlockedPartial(query: string, quantity: number, matchedTerm: string): FoodEstimate {
+  return {
+    name: query.trim(), calories: 0, quantity, source: 'partial', blocked: true,
+    matchedTerms: [matchedTerm],
+    note: `I found ${matchedTerm}, but not enough to call this a meal. Snack court requires more evidence.`,
+  }
+}
+
 const singularisePhrase = (value: string) => value.split(' ').map((word) => SINGULAR_WORDS[word] ?? word).join(' ')
 const knownKeys = () => Object.keys(LOCAL_ESTIMATES).sort((a, b) => b.length - a.length)
 const comboTerms = (value: string) => value.split(/\b(?:with|and|on|in|plus)\b/).map((part) => part.trim()).filter(Boolean)
+const MATCH_STOP_WORDS = new Set(['with', 'and', 'on', 'in', 'plus', 'the', 'a', 'an', 'of'])
 
 function resolvePart(value: string): { key: string; source: FoodEstimate['source']; partial: boolean } | null {
   if (LOCAL_ESTIMATES[value]) return { key: value, source: 'local', partial: false }
@@ -224,7 +260,8 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
   if (!normalised) return null
   const { quantity, food, explicit } = extractQuantity(normalised)
   if (!food) return null
-  const lookupPhrase = explicit ? singularisePhrase(food) : food
+  const lookupPhrase = explicit && !food.includes(' ') ? singularisePhrase(food) : food
+  const singularPhrase = explicit ? singularisePhrase(food) : (SINGULAR_FORMS[food] ?? singularisePhrase(food))
 
   const exact = LOCAL_ESTIMATES[lookupPhrase]
   if (exact) {
@@ -240,8 +277,13 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
   const alias = FOOD_ALIASES[lookupPhrase]
   if (alias && LOCAL_ESTIMATES[alias]) return createLocalEstimate(query, alias, quantity, 'alias')
 
-  const singular = SINGULAR_FORMS[lookupPhrase]
-  if (singular && LOCAL_ESTIMATES[singular]) return createLocalEstimate(query, singular, quantity, 'alias')
+  if (singularPhrase !== lookupPhrase && LOCAL_ESTIMATES[singularPhrase]) return createLocalEstimate(query, singularPhrase, quantity, 'alias')
+
+  const containedAlias = Object.keys(FOOD_ALIASES)
+    .filter((key) => key.includes(' '))
+    .sort((a, b) => b.length - a.length)
+    .find((key) => lookupPhrase.includes(key))
+  if (containedAlias) return createLocalEstimate(query, FOOD_ALIASES[containedAlias], quantity, 'alias')
 
   const containedPhrase = knownKeys().filter((key) => key.includes(' ')).find((key) => lookupPhrase.includes(key))
   if (containedPhrase) {
@@ -257,21 +299,23 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
   if (parts.length > 1) {
     const resolved = parts.map(resolvePart)
     const known = resolved.filter((part): part is NonNullable<typeof part> => Boolean(part))
-    if (known.length) {
+    if (known.length >= 2) {
       const unitCalories = known.reduce((sum, part) => sum + LOCAL_ESTIMATES[part.key], 0)
-      const unknown = parts.filter((_, index) => !resolved[index])
       return {
         name: query.trim(), calories: Math.round(unitCalories * quantity), quantity, unitCalories, source: 'combo',
         matchedTerms: known.map((part) => part.key),
-        note: unknown.length
-          ? 'One ingredient escaped the paperwork, but the rest has been counted.'
-          : 'This is snack algebra, not a court statement.',
+        note: 'This is snack algebra, not a court statement.',
       }
     }
+    if (known.length === 1) return createBlockedPartial(query, quantity, known[0].key)
   }
 
   const partial = knownKeys().find((knownFood) => lookupPhrase.includes(knownFood) || (lookupPhrase.length >= 4 && knownFood.includes(lookupPhrase)))
-  if (partial) return createLocalEstimate(query, partial, quantity, 'partial', PORTION_NOTES[partial] ?? `Using ${partial} maths. Close enough for notebook work.`)
+  if (partial) {
+    const meaningfulTokens = lookupPhrase.split(' ').filter((token) => !MATCH_STOP_WORDS.has(token))
+    if (!partial.includes(' ') && meaningfulTokens.length > 1) return createBlockedPartial(query, quantity, partial)
+    return createLocalEstimate(query, partial, quantity, 'partial', PORTION_NOTES[partial] ?? `Using ${partial} maths. Close enough for notebook work.`)
+  }
 
   const typo = COMMON_TYPOS[lookupPhrase]
   if (typo) return createLocalEstimate(query, typo, quantity, 'alias', `I think you meant ${typo}. If not, the snack oracle apologises.`)

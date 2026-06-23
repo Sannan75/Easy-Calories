@@ -79,6 +79,67 @@ test('fractional portions multiply name estimates after base estimation', async 
   }
 })
 
+test('common UK dishes beat shallow ingredient matches', async () => {
+  const expected = new Map([
+    ['fish pie', 500],
+    ['full english', 900],
+    ['full english breakfast', 900],
+    ['bacon and eggs', 350],
+    ['cornflakes with milk', 220],
+    ['chicken madras', 700],
+  ])
+
+  for (const [phrase, calories] of expected) {
+    const estimate = await estimateFoodByName(phrase)
+    assert.equal(estimate?.calories, calories, phrase)
+    assert.notEqual(estimate?.blocked, true, phrase)
+  }
+})
+
+test('known convenience products are identified as products rather than whole meals', async () => {
+  const estimate = await estimateFoodByName('honey and mustard chicken tonight')
+  assert.equal(estimate?.calories, 180)
+  assert.match(estimate?.note ?? '', /sauce|product/i)
+  assert.match(estimate?.note ?? '', /not the whole dinner/i)
+})
+
+test('dish quantities and fractions apply after the full meal is matched', async () => {
+  const expected = new Map([
+    ['half a full english', [450, 0.5]],
+    ['2x fish pie', [1000, 2]],
+    ['1.5 bacon and eggs', [525, 1.5]],
+  ])
+
+  for (const [phrase, [calories, quantity]] of expected) {
+    const estimate = await estimateFoodByName(phrase)
+    assert.equal(estimate?.calories, calories, phrase)
+    assert.equal(estimate?.quantity, quantity, phrase)
+  }
+})
+
+test('unknown meals do not collapse to one recognised ingredient', async () => {
+  for (const phrase of ['mysterious chicken thing', 'chicken with honey and mustard sauce']) {
+    const estimate = await estimateFoodByName(phrase)
+    assert.equal(estimate?.blocked, true, phrase)
+    assert.equal(estimate?.calories, 0, phrase)
+    assert.match(estimate?.note ?? '', /not enough/i, phrase)
+  }
+})
+
+test('existing fruit, sweet and combo estimates remain intact', async () => {
+  const expected = new Map([
+    ['cherries', 90],
+    ['crepe', 160],
+    ['crepe with nutella', 260],
+    ['yoghurt with berries', 220],
+  ])
+
+  for (const [phrase, calories] of expected) {
+    const estimate = await estimateFoodByName(phrase)
+    assert.equal(estimate?.calories, calories, phrase)
+  }
+})
+
 test('product names and trailing measurements are not treated as quantities', async () => {
   const wine = await estimateFoodByName('red wine 750ml')
   assert.equal(wine?.quantity, 1)
