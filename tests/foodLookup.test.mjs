@@ -60,6 +60,25 @@ test('leading quantities multiply ordinary foods after base estimation', async (
   assert.equal(compactBananas?.calories, 210)
 })
 
+test('fractional portions multiply name estimates after base estimation', async () => {
+  const expected = new Map([
+    ['half a cheese toastie', [225, 0.5]],
+    ['half cheese toastie', [225, 0.5]],
+    ['0.5 cheese toastie', [225, 0.5]],
+    ['1.5 cheese toasties', [675, 1.5]],
+    ['one and a half cheese toasties', [675, 1.5]],
+    ['two and a half biscuits', [175, 2.5]],
+    ['quarter pizza', [225, 0.25]],
+    ['0.25 pizza', [225, 0.25]],
+  ])
+
+  for (const [phrase, [calories, quantity]] of expected) {
+    const estimate = await estimateFoodByName(phrase)
+    assert.equal(estimate?.calories, calories, phrase)
+    assert.equal(estimate?.quantity, quantity, phrase)
+  }
+})
+
 test('product names and trailing measurements are not treated as quantities', async () => {
   const wine = await estimateFoodByName('red wine 750ml')
   assert.equal(wine?.quantity, 1)

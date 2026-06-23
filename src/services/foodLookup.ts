@@ -128,17 +128,35 @@ const PORTION_NOTES: Record<string, string> = {
   wine: 'Assuming a normal glass. Optimistic, perhaps.',
 }
 
-const normalise = (value: string) => value.toLowerCase().replace(/[+&]/g, ' and ').trim().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim()
+const normalise = (value: string) => value
+  .toLowerCase()
+  .replace(/(\d)\.(\d)/g, '$1decimalpoint$2')
+  .replace(/[+&]/g, ' and ')
+  .trim()
+  .replace(/[^a-z0-9]+/g, ' ')
+  .replace(/decimalpoint/g, '.')
+  .replace(/\s+/g, ' ')
+  .trim()
 
 const QUANTITY_WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4 }
 
 function extractQuantity(value: string) {
-  const numericMultiplier = value.match(/^([1-4])\s*(?:x|\*)\s+(.+)$/)
+  const wordedFraction = value.match(/^(one|two|three|four)\s+and\s+(?:a\s+)?half\s+(.+)$/)
+  if (wordedFraction) {
+    return { quantity: QUANTITY_WORDS[wordedFraction[1]] + 0.5, food: wordedFraction[2].trim(), explicit: true }
+  }
+
+  const simpleFraction = value.match(/^(half|quarter)(?:\s+(?:a|an))?\s+(.+)$/)
+  if (simpleFraction) {
+    return { quantity: simpleFraction[1] === 'half' ? 0.5 : 0.25, food: simpleFraction[2].trim(), explicit: true }
+  }
+
+  const numericMultiplier = value.match(/^((?:[1-4])(?:\.\d+)?)\s*(?:x|\*)\s+(.+)$/)
   if (numericMultiplier) {
     return { quantity: Number(numericMultiplier[1]), food: numericMultiplier[2].trim(), explicit: true }
   }
 
-  const numericPortions = value.match(/^([1-4])\s+(.+)$/)
+  const numericPortions = value.match(/^((?:[1-4](?:\.\d+)?)|(?:0\.\d+))\s+(.+)$/)
   if (numericPortions) {
     return { quantity: Number(numericPortions[1]), food: numericPortions[2].trim(), explicit: true }
   }
@@ -155,7 +173,7 @@ function createLocalEstimate(query: string, key: string, quantity: number, sourc
   const unitCalories = LOCAL_ESTIMATES[key]
   return {
     name: query.trim(),
-    calories: unitCalories * quantity,
+    calories: Math.round(unitCalories * quantity),
     quantity,
     unitCalories,
     source,
@@ -243,7 +261,7 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
       const unitCalories = known.reduce((sum, part) => sum + LOCAL_ESTIMATES[part.key], 0)
       const unknown = parts.filter((_, index) => !resolved[index])
       return {
-        name: query.trim(), calories: unitCalories * quantity, quantity, unitCalories, source: 'combo',
+        name: query.trim(), calories: Math.round(unitCalories * quantity), quantity, unitCalories, source: 'combo',
         matchedTerms: known.map((part) => part.key),
         note: unknown.length
           ? 'One ingredient escaped the paperwork, but the rest has been counted.'

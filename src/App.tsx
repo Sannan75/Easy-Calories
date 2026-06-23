@@ -35,6 +35,7 @@ const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toStri
 const totalFor = (day?: DayLog) => day?.entries.reduce((sum, item) => sum + item.calories, 0) ?? 0
 const roughly = (value: number) => `roughly ${value.toLocaleString()} kcals`
 const formatGrams = (value: number) => Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 1 })
+const formatMultiplier = (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: 2 })
 const recentKey = (name: string, calories: number) => `${normaliseFoodName(name)}|${Math.round(calories / 10) * 10}`
 const upsertFavourite = (favourites: FavouriteFood[], next: FavouriteFood) => [next, ...favourites.filter((food) => normaliseFoodName(food.name) !== normaliseFoodName(next.name))]
 
@@ -243,6 +244,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
   const [barcode, setBarcode] = useState('')
   const [calories, setCalories] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [customQuantity, setCustomQuantity] = useState('1')
+  const [allowFractionalQuantity, setAllowFractionalQuantity] = useState(false)
+  const [customQuantityOpen, setCustomQuantityOpen] = useState(false)
   const [unitCalories, setUnitCalories] = useState<number | null>(null)
   const [barcodeAmount, setBarcodeAmount] = useState<{ kcalPer100g: number; packSizeGrams: number | null } | null>(null)
   const [grams, setGrams] = useState('')
@@ -304,10 +308,15 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     const estimatedQuantity = estimate.quantity ?? 1
     const each = estimate.unitCalories ?? Math.round(estimate.calories / estimatedQuantity)
     setQuantity(estimatedQuantity)
+    setCustomQuantity(String(estimatedQuantity))
+    setAllowFractionalQuantity(true)
+    setCustomQuantityOpen(![0.5, 1, 2, 3, 4].includes(estimatedQuantity))
     setUnitCalories(each)
     setCalories(String(estimate.calories))
-    const estimateCopy = estimatedQuantity > 1
-      ? `That looks like ${estimatedQuantity}. Roughly ${each.toLocaleString()} each, so ${estimate.calories.toLocaleString()} kcals total.`
+    const estimateCopy = estimatedQuantity === 0.5
+      ? `That looks like half. Roughly ${estimate.calories.toLocaleString()} kcals.`
+      : estimatedQuantity !== 1
+        ? `${formatMultiplier(estimatedQuantity)} portions. Roughly ${each.toLocaleString()} each, so ${estimate.calories.toLocaleString()} kcals total.`
       : `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.`
     setLookupMessage({ tone: 'success', text: `${estimateCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
   }
@@ -325,6 +334,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     setName('')
     setCalories('')
     setQuantity(1)
+    setCustomQuantity('1')
+    setAllowFractionalQuantity(false)
+    setCustomQuantityOpen(false)
     setUnitCalories(null)
     setBarcodeAmount(null)
     setGrams('')
@@ -354,6 +366,9 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
       }
       if (nameEditVersionRef.current === nameEditVersionAtStart) setName(estimate.name)
       setQuantity(1)
+      setCustomQuantity('1')
+      setAllowFractionalQuantity(false)
+      setCustomQuantityOpen(false)
       if (estimate.calculationMode === 'per100g' && estimate.kcalPer100g && estimate.grams) {
         setBarcodeAmount({ kcalPer100g: estimate.kcalPer100g, packSizeGrams: estimate.packSizeGrams ?? null })
         setGrams(String(estimate.grams))
@@ -386,14 +401,30 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
 
   const chooseQuantity = (nextQuantity: number) => {
     setQuantity(nextQuantity)
+    setCustomQuantity(String(nextQuantity))
     if (unitCalories) {
       const total = Math.round(unitCalories * nextQuantity)
       setCalories(String(total))
       setLookupMessage({
         tone: 'success',
-        text: nextQuantity > 1
-          ? `Roughly ${Math.round(unitCalories).toLocaleString()} each, so ${total.toLocaleString()} kcals total. Sandwich multiplication: finally useful.`
+        text: nextQuantity !== 1
+          ? `${Math.round(unitCalories).toLocaleString()} each × ${formatMultiplier(nextQuantity)} = roughly ${total.toLocaleString()} kcals. Fractions are allowed. We’re not monsters.`
           : `I reckon this is roughly ${total.toLocaleString()} kcals.`,
+      })
+    }
+  }
+
+  const enterCustomQuantity = (value: string) => {
+    setCustomQuantity(value)
+    const nextQuantity = Number(value)
+    if (!(nextQuantity > 0) || nextQuantity > 100) return
+    setQuantity(nextQuantity)
+    if (unitCalories) {
+      const total = Math.round(unitCalories * nextQuantity)
+      setCalories(String(total))
+      setLookupMessage({
+        tone: 'success',
+        text: `${Math.round(unitCalories).toLocaleString()} each × ${formatMultiplier(nextQuantity)} = roughly ${total.toLocaleString()} kcals. The notebook has accepted this awkward truth.`,
       })
     }
   }
@@ -433,7 +464,7 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
         onSubmit(submittedName, Math.round(kcal), meal, saveAsFavourite)
       }}>
         {mode === 'name' ? <>
-          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null); setBarcodeAmount(null); setGrams('') }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
+          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setCustomQuantity('1'); setAllowFractionalQuantity(false); setCustomQuantityOpen(false); setUnitCalories(null); setBarcodeAmount(null); setGrams('') }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
           <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
         </> : <>
           {scannerOpen && <BarcodeScanner onCancel={() => setScannerOpen(false)} onDetected={(scannedBarcode) => {
@@ -459,8 +490,8 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
           <label>Amount eaten<div className="unit-input"><input aria-label="Amount eaten" type="number" inputMode="decimal" min="0.1" max="10000" step="0.1" value={grams} onFocus={keepFocusedControlVisible} onChange={(e) => chooseGrams(e.target.value)} /><span>g</span></div></label>
           {Number(grams) > 0 && <p>{Math.round(barcodeAmount.kcalPer100g).toLocaleString()} per 100g × {formatGrams(Number(grams))}g = roughly {caloriesForGrams(barcodeAmount.kcalPer100g, Number(grams)).toLocaleString()} kcals</p>}
         </section>}
-        {unitCalories && <div className="quantity-picker"><div><strong>How many made an appearance?</strong><small>{Math.round(unitCalories).toLocaleString()} each × {quantity} = roughly {Math.round(unitCalories * quantity).toLocaleString()} kcals</small></div><div className="quantity-options" aria-label="Item quantity">{[1, 2, 3, 4].map((number) => <button type="button" key={number} className={quantity === number ? 'active' : ''} aria-pressed={quantity === number} onClick={() => chooseQuantity(number)}>{number}</button>)}</div></div>}
-        <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => { const value = e.target.value; setCalories(value); if (unitCalories && Number(value) > 0) setUnitCalories(Number(value) / quantity) }} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
+        {unitCalories && <div className="quantity-picker"><div><strong>How many made an appearance?</strong><small>{Math.round(unitCalories).toLocaleString()} each × {formatMultiplier(quantity)} = roughly {Math.round(unitCalories * quantity).toLocaleString()} kcals</small></div><div className={`quantity-options${allowFractionalQuantity ? ' fractional' : ''}`} aria-label="Item quantity">{(allowFractionalQuantity ? [0.5, 1, 2, 3, 4] : [1, 2, 3, 4]).map((number) => <button type="button" key={number} className={quantity === number ? 'active' : ''} aria-pressed={quantity === number} onClick={() => chooseQuantity(number)}>{number === 0.5 ? '½' : number}</button>)}</div>{allowFractionalQuantity && <div className="custom-quantity"><button className="text-button" type="button" onClick={() => setCustomQuantityOpen((open) => !open)}>Need stranger maths?</button>{customQuantityOpen && <label>Portions<small>Snack maths accepts decimals.</small><input aria-label="Custom portions" type="number" inputMode="decimal" min="0.01" max="100" step="0.01" value={customQuantity} onFocus={keepFocusedControlVisible} onChange={(e) => enterCustomQuantity(e.target.value)} /></label>}</div>}</div>}
+        <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => setCalories(e.target.value)} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
         <label>Where did it happen?<select value={meal} onFocus={keepFocusedControlVisible} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>
         <label className="usual-toggle"><input type="checkbox" checked={saveAsFavourite} onChange={(e) => setSaveAsFavourite(e.target.checked)} /><span><strong>Save as a usual suspect</strong><small>Handy for foods making repeat appearances.</small></span></label>
         <button className="primary-button" type="submit" disabled={isLookingUp}>Log the evidence</button>

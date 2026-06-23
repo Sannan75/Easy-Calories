@@ -117,8 +117,13 @@ input, select { display: block; width: 100%; height: 51px; margin-top: 7px; padd
 .quantity-picker strong { font-size: 12px; }
 .quantity-picker small { margin-top: 4px; color: var(--green); font-size: 10px; }
 .quantity-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.quantity-options.fractional { grid-template-columns: repeat(5, 1fr); }
 .quantity-options button { min-height: 38px; border: 1px solid #d8cfc2; border-radius: 10px; background: white; color: var(--muted); font-weight: 700; cursor: pointer; }
 .quantity-options button.active { border-color: var(--green); background: var(--green); color: white; }
+.custom-quantity { margin-top: 8px; }
+.custom-quantity > .text-button { min-height: 40px; padding-inline: 0; }
+.custom-quantity label { margin-top: 4px; padding: 10px 12px 12px; border-radius: 12px; background: rgba(255, 255, 255, .68); }
+.custom-quantity label small { display: block; margin: 2px 0 7px; }
 .sheet .primary-button { position: static; margin-top: 3px; box-shadow: 0 8px 18px rgba(239,118,95,.2); }
 .usual-toggle { min-height: 60px; padding: 10px 12px; display: flex; align-items: center; gap: 11px; border: 1px solid var(--line); border-radius: 13px; background: #f7f1e8; cursor: pointer; }
 .usual-toggle input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; display: grid; place-items: center; width: 24px; height: 24px; margin: 0; padding: 0; border: 2px solid #b9ab9a; border-radius: 8px; background: white; }
