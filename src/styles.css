@@ -101,6 +101,18 @@ input, select { display: block; width: 100%; height: 51px; margin-top: 7px; padd
 .barcode-evidence { margin: -7px 2px 15px; color: var(--muted); font-size: 10px; line-height: 1.4; }
 .field-hint { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; font-weight: 500; line-height: 1.4; }
 .quantity-picker { margin: -2px 0 15px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; background: #f7f1e8; }
+.amount-picker { margin: -2px 0 15px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; background: #f7f1e8; }
+.amount-picker > div:first-child strong, .amount-picker > div:first-child small { display: block; }
+.amount-picker > div:first-child strong { font-size: 12px; }
+.amount-picker > div:first-child small { margin-top: 4px; color: var(--green); font-size: 10px; }
+.amount-options { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+.amount-options button { min-height: 38px; padding: 0 10px; border: 1px solid #d8cfc2; border-radius: 10px; background: white; color: var(--muted); font-size: 10px; font-weight: 700; cursor: pointer; }
+.amount-options button.active { border-color: var(--green); background: var(--green); color: white; }
+.amount-picker label { margin: 0; }
+.unit-input { position: relative; }
+.unit-input input { padding-right: 40px; }
+.unit-input span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; }
+.amount-picker > p { margin: 9px 2px 0; color: var(--green); font-size: 10px; line-height: 1.4; }
 .quantity-picker strong, .quantity-picker small { display: block; }
 .quantity-picker strong { font-size: 12px; }
 .quantity-picker small { margin-top: 4px; color: var(--green); font-size: 10px; }

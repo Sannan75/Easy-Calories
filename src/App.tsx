@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, FocusEvent } from 'react'
 import type { AppData, DayLog, FavouriteFood, FoodLogEntry, MealSection, RecentFood } from './types'
 import { emptyData, loadData, normaliseData, saveData } from './storage'
-import { estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
+import { caloriesForGrams, estimateFoodByName, FoodLookupError, lookupFoodByBarcode } from './services/foodLookup'
 import { dedupeFavourites, normaliseFoodName } from './utils/foodKey'
 import { BarcodeScanner } from './BarcodeScanner'
 import { createBarcodeLookupGuard, normaliseScannedBarcode } from './services/scanner'
@@ -34,6 +34,7 @@ const todayKey = () => {
 const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
 const totalFor = (day?: DayLog) => day?.entries.reduce((sum, item) => sum + item.calories, 0) ?? 0
 const roughly = (value: number) => `roughly ${value.toLocaleString()} kcals`
+const formatGrams = (value: number) => Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 1 })
 const recentKey = (name: string, calories: number) => `${normaliseFoodName(name)}|${Math.round(calories / 10) * 10}`
 const upsertFavourite = (favourites: FavouriteFood[], next: FavouriteFood) => [next, ...favourites.filter((food) => normaliseFoodName(food.name) !== normaliseFoodName(next.name))]
 
@@ -243,6 +244,8 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
   const [calories, setCalories] = useState('')
   const [quantity, setQuantity] = useState(1)
   const [unitCalories, setUnitCalories] = useState<number | null>(null)
+  const [barcodeAmount, setBarcodeAmount] = useState<{ kcalPer100g: number; packSizeGrams: number | null } | null>(null)
+  const [grams, setGrams] = useState('')
   const [meal, setMeal] = useState(defaultMeal)
   const [saveAsFavourite, setSaveAsFavourite] = useState(false)
   const [lookupMessage, setLookupMessage] = useState<{ tone: 'success' | 'error' | 'loading'; text: string } | null>(null)
@@ -277,6 +280,16 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     const target = event.currentTarget
     window.setTimeout(() => target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 180)
   }
+  const gramOptions = useMemo(() => {
+    const options = [{ label: '50g', grams: 50 }, { label: '100g', grams: 100 }]
+    if (barcodeAmount?.packSizeGrams) {
+      options.push(
+        { label: `Half pack ${formatGrams(barcodeAmount.packSizeGrams / 2)}g`, grams: barcodeAmount.packSizeGrams / 2 },
+        { label: `Whole pack ${formatGrams(barcodeAmount.packSizeGrams)}g`, grams: barcodeAmount.packSizeGrams },
+      )
+    }
+    return options.filter((option, index) => options.findIndex((candidate) => candidate.grams === option.grams) === index)
+  }, [barcodeAmount])
 
   const estimateByName = async () => {
     if (!name.trim()) return
@@ -313,6 +326,8 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     setCalories('')
     setQuantity(1)
     setUnitCalories(null)
+    setBarcodeAmount(null)
+    setGrams('')
     setLookupMessage(null)
     setIsLookingUp(false)
   }
@@ -339,11 +354,19 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
       }
       if (nameEditVersionRef.current === nameEditVersionAtStart) setName(estimate.name)
       setQuantity(1)
-      setUnitCalories(estimate.unitCalories ?? estimate.calories)
+      if (estimate.calculationMode === 'per100g' && estimate.kcalPer100g && estimate.grams) {
+        setBarcodeAmount({ kcalPer100g: estimate.kcalPer100g, packSizeGrams: estimate.packSizeGrams ?? null })
+        setGrams(String(estimate.grams))
+        setUnitCalories(null)
+      } else {
+        setBarcodeAmount(null)
+        setGrams('')
+        setUnitCalories(estimate.unitCalories ?? estimate.calories)
+      }
       setCalories(String(estimate.calories))
       appliedBarcodeRef.current = cleanBarcode
       const resultCopy = estimate.name.trim()
-        ? `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.`
+        ? `Open Food Facts reckons this is ${estimate.name}. The notebook accepts corrections.`
         : 'Found the calories. The name tag, however, has wandered off.'
       setLookupMessage({ tone: 'success', text: `${resultCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
       if (import.meta.env.DEV) console.debug('[Easy Calories] barcode result applied', { barcode: cleanBarcode, productName: estimate.productName ?? estimate.name })
@@ -375,6 +398,17 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
     }
   }
 
+  const chooseGrams = (nextGrams: number | string) => {
+    const value = typeof nextGrams === 'number' ? String(Math.round(nextGrams * 10) / 10) : nextGrams
+    setGrams(value)
+    const numericGrams = Number(value)
+    if (!barcodeAmount || !(numericGrams > 0)) {
+      setCalories('')
+      return
+    }
+    setCalories(String(caloriesForGrams(barcodeAmount.kcalPer100g, numericGrams)))
+  }
+
   return <div className="modal-backdrop" style={backdropStyle} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
     <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="add-title">
       <div className="sheet-handle" />
@@ -399,7 +433,7 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
         onSubmit(submittedName, Math.round(kcal), meal, saveAsFavourite)
       }}>
         {mode === 'name' ? <>
-          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null) }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
+          <label>What was it?<input ref={nameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { setName(e.target.value); setLookupMessage(null); setCalories(''); setQuantity(1); setUnitCalories(null); setBarcodeAmount(null); setGrams('') }} placeholder="e.g. two heroic cheese toasties" maxLength={80} required /></label>
           <button className="estimate-button" type="button" disabled={!name.trim() || isLookingUp} onClick={estimateByName}>{isLookingUp ? 'Consulting the oracle…' : 'Guess the damage'}</button>
         </> : <>
           {scannerOpen && <BarcodeScanner onCancel={() => setScannerOpen(false)} onDetected={(scannedBarcode) => {
@@ -419,6 +453,12 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
           {evidenceBarcode && <p className="barcode-evidence">Looked up from barcode {evidenceBarcode}</p>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
+        {barcodeAmount && <section className="amount-picker" aria-label="Packaged food amount">
+          <div><strong>How much made an appearance?</strong><small>{Math.round(barcodeAmount.kcalPer100g).toLocaleString()} kcals per 100g</small></div>
+          <div className="amount-options">{gramOptions.map((option) => <button type="button" key={option.label} className={Number(grams) === option.grams ? 'active' : ''} onClick={() => chooseGrams(option.grams)}>{option.label}</button>)}</div>
+          <label>Amount eaten<div className="unit-input"><input aria-label="Amount eaten" type="number" inputMode="decimal" min="0.1" max="10000" step="0.1" value={grams} onFocus={keepFocusedControlVisible} onChange={(e) => chooseGrams(e.target.value)} /><span>g</span></div></label>
+          {Number(grams) > 0 && <p>{Math.round(barcodeAmount.kcalPer100g).toLocaleString()} per 100g × {formatGrams(Number(grams))}g = roughly {caloriesForGrams(barcodeAmount.kcalPer100g, Number(grams)).toLocaleString()} kcals</p>}
+        </section>}
         {unitCalories && <div className="quantity-picker"><div><strong>How many made an appearance?</strong><small>{Math.round(unitCalories).toLocaleString()} each × {quantity} = roughly {Math.round(unitCalories * quantity).toLocaleString()} kcals</small></div><div className="quantity-options" aria-label="Item quantity">{[1, 2, 3, 4].map((number) => <button type="button" key={number} className={quantity === number ? 'active' : ''} aria-pressed={quantity === number} onClick={() => chooseQuantity(number)}>{number}</button>)}</div></div>}
         <label>What shall we log it as?<small className="field-hint">{calories ? 'The app has had a guess. Editing is entirely legal.' : 'Optional, unless you distrust machines. Which is fair.'}</small><input type="number" inputMode="numeric" min="1" max="10000" step="1" value={calories} onFocus={keepFocusedControlVisible} onChange={(e) => { const value = e.target.value; setCalories(value); if (unitCalories && Number(value) > 0) setUnitCalories(Number(value) / quantity) }} placeholder={calories ? 'The app has had a guess' : 'Your heroic guess, if you have one'} required /></label>
         <label>Where did it happen?<select value={meal} onFocus={keepFocusedControlVisible} onChange={(e) => setMeal(e.target.value as MealSection)}>{meals.map((m) => <option value={m.id} key={m.id}>{m.label}</option>)}</select></label>

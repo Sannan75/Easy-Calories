@@ -3,6 +3,10 @@ export interface FoodEstimate {
   brand?: string
   barcode?: string
   productName?: string
+  calculationMode?: 'serving' | 'per100g'
+  kcalPer100g?: number
+  grams?: number
+  packSizeGrams?: number
   calories: number
   quantity?: number
   unitCalories?: number
@@ -263,6 +267,9 @@ type OpenFoodFactsProduct = {
   generic_name?: string
   abbreviated_product_name?: string
   brands?: string
+  quantity?: string
+  product_quantity?: number | string
+  product_quantity_unit?: string
   serving_quantity?: number | string
   serving_size?: string
   nutriments?: Record<string, number | string | undefined>
@@ -290,11 +297,36 @@ const asPositiveNumber = (value: unknown): number | null => {
   return Number.isFinite(number) && number > 0 ? number : null
 }
 
+export const caloriesForGrams = (kcalPer100g: number, grams: number) => Math.round(kcalPer100g * grams / 100)
+
+export function parseGramAmount(value: unknown): number | null {
+  if (typeof value !== 'string') return null
+  const match = value.toLowerCase().match(/(\d+(?:[.,]\d+)?)\s*(kg|g)\b/)
+  if (!match) return null
+  const amount = Number.parseFloat(match[1].replace(',', '.'))
+  if (!(amount > 0)) return null
+  return match[2] === 'kg' ? amount * 1000 : amount
+}
+
+export function barcodePackSizeGrams(product: Pick<OpenFoodFactsProduct, 'quantity' | 'product_quantity' | 'product_quantity_unit' | 'serving_size'>) {
+  const labelledQuantity = parseGramAmount(product.quantity)
+  if (labelledQuantity) return labelledQuantity
+
+  const labelledProductQuantity = parseGramAmount(
+    product.product_quantity_unit
+      ? `${product.product_quantity ?? ''}${product.product_quantity_unit}`
+      : product.product_quantity,
+  )
+  if (labelledProductQuantity) return labelledProductQuantity
+
+  return parseGramAmount(product.serving_size)
+}
+
 export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate | null> {
   const cleanBarcode = barcode.replace(/\s+/g, '')
   if (!/^\d{8,14}$/.test(cleanBarcode)) return null
 
-  const fields = 'product_name,generic_name,abbreviated_product_name,brands,serving_quantity,serving_size,nutriments'
+  const fields = 'product_name,generic_name,abbreviated_product_name,brands,quantity,product_quantity,product_quantity_unit,serving_quantity,serving_size,nutriments'
   const controller = new AbortController()
   const timeout = window.setTimeout(() => controller.abort(), 9000)
 
@@ -312,6 +344,7 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
     const perServing = asPositiveNumber(nutriments['energy-kcal_serving'])
     const per100g = asPositiveNumber(nutriments['energy-kcal_100g']) ?? asPositiveNumber(nutriments['energy-kcal'])
     const servingQuantity = asPositiveNumber(product.serving_quantity)
+    const packSizeGrams = barcodePackSizeGrams(product)
     const productName = product.product_name?.trim() || undefined
     const name = barcodeProductDisplayName(product, cleanBarcode)
 
@@ -324,36 +357,27 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
         calories: Math.round(perServing),
         quantity: 1,
         unitCalories: Math.round(perServing),
+        calculationMode: 'serving',
         source: 'open-food-facts',
         note: product.serving_size ? `Using the listed serving of ${product.serving_size}.` : 'Using the listed serving calories.',
       }
     }
 
-    if (per100g && servingQuantity) {
-      return {
-        name,
-        brand: product.brands?.trim() || undefined,
-        barcode: cleanBarcode,
-        productName,
-        calories: Math.round(per100g * servingQuantity / 100),
-        quantity: 1,
-        unitCalories: Math.round(per100g * servingQuantity / 100),
-        source: 'open-food-facts',
-        note: `Roughly calculated for ${product.serving_size || `${servingQuantity}g`}.`,
-      }
-    }
-
     if (per100g) {
+      const defaultGrams = packSizeGrams ?? (product.serving_size && /\bg\b/i.test(product.serving_size) ? servingQuantity : null) ?? 100
       return {
         name,
         brand: product.brands?.trim() || undefined,
         barcode: cleanBarcode,
         productName,
-        calories: Math.round(per100g),
+        calories: caloriesForGrams(per100g, defaultGrams),
         quantity: 1,
-        unitCalories: Math.round(per100g),
         source: 'open-food-facts',
-        note: 'Found it, but the serving size is being coy. Using per-100g calories.',
+        calculationMode: 'per100g',
+        kcalPer100g: per100g,
+        grams: defaultGrams,
+        packSizeGrams: packSizeGrams ?? undefined,
+        note: 'The database gives calories per 100g. Tell me how much you had and I’ll do the snack maths.',
       }
     }
 

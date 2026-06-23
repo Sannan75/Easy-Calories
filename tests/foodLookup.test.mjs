@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { barcodeProductDisplayName, estimateFoodByName, lookupFoodByBarcode } from '../src/services/foodLookup.ts'
+import { barcodePackSizeGrams, barcodeProductDisplayName, caloriesForGrams, estimateFoodByName, lookupFoodByBarcode, parseGramAmount } from '../src/services/foodLookup.ts'
 
 const cases = [
   ['cheese on toast', 350, 1],
@@ -107,6 +107,55 @@ test('nutrition-only barcode lookup succeeds with an intentionally blank display
     assert.equal(estimate.name, '')
     assert.equal(estimate.calories, 250)
     assert.equal(estimate.barcode, '5063089309292')
+  } finally {
+    globalThis.fetch = originalFetch
+    if (originalWindow === undefined) delete globalThis.window
+    else globalThis.window = originalWindow
+  }
+})
+
+test('per-100g calorie maths supports packs and fractional gram amounts', () => {
+  assert.equal(caloriesForGrams(528, 100), 528)
+  assert.equal(caloriesForGrams(528, 125), 660)
+  assert.equal(caloriesForGrams(528, 62.5), 330)
+  assert.equal(caloriesForGrams(484, 400), 1936)
+})
+
+test('gram-labelled pack sizes are parsed conservatively', () => {
+  assert.equal(parseGramAmount('125g'), 125)
+  assert.equal(parseGramAmount('400 g'), 400)
+  assert.equal(parseGramAmount('1 portion (400 g)'), 400)
+  assert.equal(barcodePackSizeGrams({ quantity: '125g' }), 125)
+  assert.equal(barcodePackSizeGrams({ product_quantity: 125, product_quantity_unit: 'g' }), 125)
+  assert.equal(barcodePackSizeGrams({ product_quantity: 125 }), null)
+  assert.equal(barcodePackSizeGrams({}), null)
+})
+
+test('per-100g lookup defaults to a known pack size and exposes amount metadata', async () => {
+  const originalFetch = globalThis.fetch
+  const originalWindow = globalThis.window
+  globalThis.window = { setTimeout: globalThis.setTimeout, clearTimeout: globalThis.clearTimeout }
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      status: 1,
+      product: {
+        product_name: 'Masala Peanuts',
+        quantity: '125g',
+        nutriments: { 'energy-kcal_100g': 528 },
+      },
+    }),
+  })
+
+  try {
+    const estimate = await lookupFoodByBarcode('5060231726907')
+    assert.ok(estimate)
+    assert.equal(estimate.name, 'Masala Peanuts')
+    assert.equal(estimate.calculationMode, 'per100g')
+    assert.equal(estimate.kcalPer100g, 528)
+    assert.equal(estimate.packSizeGrams, 125)
+    assert.equal(estimate.grams, 125)
+    assert.equal(estimate.calories, 660)
   } finally {
     globalThis.fetch = originalFetch
     if (originalWindow === undefined) delete globalThis.window
