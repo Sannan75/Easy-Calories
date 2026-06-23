@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { barcodeProductDisplayName, estimateFoodByName } from '../src/services/foodLookup.ts'
+import { barcodeProductDisplayName, estimateFoodByName, lookupFoodByBarcode } from '../src/services/foodLookup.ts'
 
 const cases = [
   ['cheese on toast', 350, 1],
@@ -76,6 +76,40 @@ test('product names and trailing measurements are not treated as quantities', as
 test('barcode product identity uses stable priority with barcode as last resort', () => {
   assert.equal(barcodeProductDisplayName({ product_name: 'Fish Pie', generic_name: 'Pie', brands: 'Seaside' }, '12345678'), 'Fish Pie')
   assert.equal(barcodeProductDisplayName({ generic_name: 'Fish Pie', brands: 'Seaside' }, '12345678'), 'Fish Pie')
+  assert.equal(barcodeProductDisplayName({ abbreviated_product_name: 'Masala Peanuts', brands: 'Snack Co' }, '12345678'), 'Masala Peanuts')
   assert.equal(barcodeProductDisplayName({ brands: 'Seaside' }, '12345678'), 'Seaside')
-  assert.equal(barcodeProductDisplayName({}, '12345678'), '12345678')
+  assert.equal(barcodeProductDisplayName({ product_name: '12345678', generic_name: '---', brands: '98765' }, '12345678'), '')
+  assert.equal(barcodeProductDisplayName({}, '12345678'), '')
+})
+
+test('nutrition-only barcode lookup succeeds with an intentionally blank display name', async () => {
+  const originalFetch = globalThis.fetch
+  const originalWindow = globalThis.window
+  globalThis.window = { setTimeout: globalThis.setTimeout, clearTimeout: globalThis.clearTimeout }
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      status: 1,
+      product: {
+        product_name: '5063089309292',
+        generic_name: '---',
+        brands: '12345',
+        serving_quantity: 100,
+        serving_size: '100g',
+        nutriments: { 'energy-kcal_100g': 250 },
+      },
+    }),
+  })
+
+  try {
+    const estimate = await lookupFoodByBarcode('5063089309292')
+    assert.ok(estimate)
+    assert.equal(estimate.name, '')
+    assert.equal(estimate.calories, 250)
+    assert.equal(estimate.barcode, '5063089309292')
+  } finally {
+    globalThis.fetch = originalFetch
+    if (originalWindow === undefined) delete globalThis.window
+    else globalThis.window = originalWindow
+  }
 })

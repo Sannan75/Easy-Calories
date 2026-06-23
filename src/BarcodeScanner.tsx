@@ -74,6 +74,7 @@ export function BarcodeScanner({ onDetected, onCancel }: { onDetected: (barcode:
       <div className="scanner-frame" aria-hidden="true" />
     </div>
     <p className="scanner-instruction">Point the barcode at the rectangle. The snack oracle is squinting.</p>
+    <p className="scanner-privacy">Your phone may ask each time. Annoying, but private. We only use the camera while scanning.</p>
     {isStillHunting && !error && <p className="scanner-hint" role="status">Still hunting. Better light or a flatter packet may help.</p>}
     {error && <div className="lookup-message error" role="status">{error}</div>}
     <div className="scanner-actions">

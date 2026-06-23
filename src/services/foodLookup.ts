@@ -261,6 +261,7 @@ export async function estimateFoodByName(query: string): Promise<FoodEstimate | 
 type OpenFoodFactsProduct = {
   product_name?: string
   generic_name?: string
+  abbreviated_product_name?: string
   brands?: string
   serving_quantity?: number | string
   serving_size?: string
@@ -272,11 +273,16 @@ type OpenFoodFactsResponse = {
   product?: OpenFoodFactsProduct
 }
 
-export function barcodeProductDisplayName(product: Pick<OpenFoodFactsProduct, 'product_name' | 'generic_name' | 'brands'>, barcode: string) {
-  return product.product_name?.trim()
-    || product.generic_name?.trim()
-    || product.brands?.trim()
-    || barcode
+const usableProductName = (candidate: string | undefined, barcode: string) => {
+  const value = candidate?.replace(/\s+/g, ' ').trim() ?? ''
+  if (!value || value === barcode || !/\p{L}/u.test(value)) return ''
+  return value
+}
+
+export function barcodeProductDisplayName(product: Pick<OpenFoodFactsProduct, 'product_name' | 'generic_name' | 'abbreviated_product_name' | 'brands'>, barcode: string) {
+  return [product.product_name, product.generic_name, product.abbreviated_product_name, product.brands]
+    .map((candidate) => usableProductName(candidate, barcode))
+    .find(Boolean) ?? ''
 }
 
 const asPositiveNumber = (value: unknown): number | null => {
@@ -288,7 +294,7 @@ export async function lookupFoodByBarcode(barcode: string): Promise<FoodEstimate
   const cleanBarcode = barcode.replace(/\s+/g, '')
   if (!/^\d{8,14}$/.test(cleanBarcode)) return null
 
-  const fields = 'product_name,generic_name,brands,serving_quantity,serving_size,nutriments'
+  const fields = 'product_name,generic_name,abbreviated_product_name,brands,serving_quantity,serving_size,nutriments'
   const controller = new AbortController()
   const timeout = window.setTimeout(() => controller.abort(), 9000)
 

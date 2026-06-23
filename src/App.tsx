@@ -342,7 +342,10 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
       setUnitCalories(estimate.unitCalories ?? estimate.calories)
       setCalories(String(estimate.calories))
       appliedBarcodeRef.current = cleanBarcode
-      setLookupMessage({ tone: 'success', text: `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.${estimate.note ? ` ${estimate.note}` : ''}` })
+      const resultCopy = estimate.name.trim()
+        ? `I reckon this is roughly ${estimate.calories.toLocaleString()} kcals.`
+        : 'Found the calories. The name tag, however, has wandered off.'
+      setLookupMessage({ tone: 'success', text: `${resultCopy}${estimate.note ? ` ${estimate.note}` : ''}` })
       if (import.meta.env.DEV) console.debug('[Easy Calories] barcode result applied', { barcode: cleanBarcode, productName: estimate.productName ?? estimate.name })
     } catch (error) {
       if (!barcodeGuard.isCurrent(ticket)) {
@@ -412,7 +415,7 @@ function FoodForm({ defaultMeal, onClose, onToast, onSubmit }: { defaultMeal: Me
           <label>Barcode number<input value={barcode} onFocus={keepFocusedControlVisible} onChange={(e) => updateBarcode(e.target.value.replace(/[^0-9 ]/g, ''))} placeholder="Type or paste the tiny number" inputMode="numeric" maxLength={18} /></label>
           {!scannerOpen && <button className="scan-button" type="button" onClick={() => { setLookupMessage(null); setScannerOpen(true) }}><span aria-hidden="true">▣</span> Scan the evidence</button>}
           <button className="estimate-button" type="button" disabled={!barcode.trim() || isLookingUp} onClick={() => void estimateByBarcode()}>{isLookingUp ? 'Rummaging in the tins…' : 'Ask the snack oracle'}</button>
-          {(barcode.trim() || evidenceBarcode || name) && <label>What shall we call it?<input ref={displayNameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { nameEditVersionRef.current += 1; setName(e.target.value) }} maxLength={80} /></label>}
+          {(barcode.trim() || evidenceBarcode || name) && <label>What shall we call it?<input ref={displayNameRef} value={name} onFocus={keepFocusedControlVisible} onChange={(e) => { nameEditVersionRef.current += 1; setName(e.target.value) }} placeholder="What shall we call this mysterious packet?" maxLength={80} /></label>}
           {evidenceBarcode && <p className="barcode-evidence">Looked up from barcode {evidenceBarcode}</p>}
         </>}
         {lookupMessage && <div className={`lookup-message ${lookupMessage.tone}`} role="status">{lookupMessage.text}</div>}
